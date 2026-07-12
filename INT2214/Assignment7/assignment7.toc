@@ -1,0 +1,9 @@
+\xpginauxfiletrue 
+\selectlanguage *{vietnamese}
+\contentsline {section}{\numberline {1}Bài 1}{3}{section.1}%
+\contentsline {subsection}{\numberline {1.1}Đề bài}{3}{subsection.1.1}%
+\contentsline {subsection}{\numberline {1.2}Giải thích}{3}{subsection.1.2}%
+\contentsline {section}{\numberline {2}Bài 2}{3}{section.2}%
+\contentsline {subsection}{\numberline {2.1}Đề bài}{3}{subsection.2.1}%
+\contentsline {subsection}{\numberline {2.2}Giải thích}{4}{subsection.2.2}%
+\xpginauxfilefalse 

@@ -1,0 +1,8 @@
+\xpginauxfiletrue 
+\selectlanguage *{vietnamese}
+\contentsline {section}{\numberline {1}Giải thích các thuật toán lập lịch CPU trong chương trình}{3}{section.1}%
+\contentsline {subsection}{\numberline {1.1}Cấu trúc dữ liệu và Lập lịch không cho phép dừng (Non-Preemptive)}{3}{subsection.1.1}%
+\contentsline {subsection}{\numberline {1.2}Lập lịch cho phép dừng (Preemptive)}{3}{subsection.1.2}%
+\contentsline {subsection}{\numberline {1.3}Round Robin và Hàng đợi đa cấp (MLFQ)}{4}{subsection.1.3}%
+\contentsline {subsection}{\numberline {1.4}Tính toán hiệu năng}{4}{subsection.1.4}%
+\xpginauxfilefalse 

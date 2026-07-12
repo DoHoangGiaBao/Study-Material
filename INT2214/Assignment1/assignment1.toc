@@ -1,0 +1,7 @@
+\xpginauxfiletrue 
+\selectlanguage *{vietnamese}
+\contentsline {section}{\numberline {1}Các bước tải phần mềm và cài đặt hệ điều hành}{3}{section.1}%
+\contentsline {subsection}{\numberline {1.1}Tải phần mềm}{3}{subsection.1.1}%
+\contentsline {subsection}{\numberline {1.2}Cài đặt hệ điều hành}{3}{subsection.1.2}%
+\contentsline {section}{\numberline {2}Kết quả và đánh giá}{3}{section.2}%
+\xpginauxfilefalse 

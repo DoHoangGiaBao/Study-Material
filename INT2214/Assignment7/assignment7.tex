@@ -1,0 +1,91 @@
+\documentclass[12pt, letterpaper]{article}
+
+% --- Packages ---
+\usepackage{geometry}
+ \geometry{margin=1in}
+\usepackage{graphicx}
+\usepackage{amsmath, amssymb}
+\usepackage{booktabs}
+\usepackage{hyperref}
+\usepackage{cite}
+\usepackage{setspace}
+\onehalfspacing
+\usepackage{fontspec}
+\usepackage{polyglossia}
+\usepackage{float}
+\usepackage{svg}
+\usepackage{enumitem}
+\setmainlanguage{vietnamese}
+
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{tabularx}
+
+\lstset{
+    language=C,
+    basicstyle=\ttfamily\small,
+    keywordstyle=\color{blue},
+    stringstyle=\color{red},
+    commentstyle=\color{green!60!black},
+    breaklines=true,
+    frame=single, % Tạo khung xung quanh code
+    backgroundcolor=\color{gray!5}
+}
+
+\renewcommand{\lstlistingname}{Mã nguồn}
+
+% --- Metadata ---
+\title{Bài tập 7}
+\author{Đỗ Hoàng Gia Bảo - 23020783 \\ \small Khoa Điện tử - Viễn Thông}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+\centering
+Báo cáo sẽ trình bày các bước thực hiện bài tập 7.
+\end{abstract}
+% --- Front Matter (Roman Numerals) ---
+\newpage
+\tableofcontents
+
+% --- Main Content (Arabic Numerals) ---
+\newpage
+\pagenumbering{arabic}
+\setcounter{page}{3} % This automatically resets the counter to 1
+
+\section{Bài 1}
+\subsection{Đề bài}
+Ba tiến trình sau đây chạy đồng thời với 3 semaphores nhị phân được khởi tạo là S0 = 1, S1 = 1, S2 = 0.
+\begin{table}[H]
+\centering
+\begin{tabularx}{\textwidth}{|X|X|X|}
+\hline
+\textbf{Process P0} & \textbf{Process P1} & \textbf{Process P2} \\ \hline
+\texttt{while(true) \{} & \texttt{while(true) \{} & \texttt{while(true) \{} \\
+\texttt{\quad wait(S0);} & \texttt{\quad wait(S1);} & \texttt{\quad wait(S2);} \\
+\texttt{\quad print '0';} & \texttt{\quad signal(S0);} & \texttt{\quad signal(S0);} \\
+\texttt{\quad signal(S1);} & \texttt{\}} & \texttt{\}} \\
+\texttt{\quad signal(S2);} & & \\
+\texttt{\}} & & \\ \hline
+\end{tabularx}
+\end{table}
+\noindent P0 sẽ in bao nhiêu lần ‘0’ ? Giải thích.
+\subsection{Giải thích}
+Ban đầu, S0 = 1, S1 = 1, S2 = 0. P0 sẽ thực hiện wait(S0) thành công, in '0', sau đó signal(S1) và signal(S2). P1 sẽ thực hiện wait(S1) thành công, signal(S0), và P2 sẽ thực hiện wait(S2) thành công, signal(S0). Do đó, P0 sẽ in '0' một lần, sau đó P1 và P2 sẽ tiếp tục thực hiện, nhưng P0 sẽ không thể in '0' lần nào nữa vì S0 sẽ luôn bị P1 và P2 signal sau khi P0 đã in '0'. Do đó, P0 sẽ in '0' một lần duy nhất.
+\section{Bài 2}
+\subsection{Đề bài}
+Mỗi tiến trình Pi, i = 1, 2 … 9 có đoạn mã như sau:
+\begin{lstlisting}
+repeat
+    P(mutex)
+       { Critical Section }
+    V(mutex)
+forever
+\end{lstlisting}
+Tiến trình P10 có đoạn mã tương tự nhưng V(mutex), P(mutex) đổi chỗ cho nhau. Hỏi số lượng tiến trình nhiều nhất cùng ở ở khu vực quan trọng trong một thời điểm ?
+\subsection{Giải thích}
+Trong trường hợp này, tiến trình P10 sẽ luôn ở trong khu vực quan trọng vì nó thực hiện V(mutex) trước P(mutex). Do đó, chỉ có một tiến trình duy nhất có thể ở trong khu vực quan trọng tại một thời điểm, đó là P10. Các tiến trình P1 đến P9 sẽ phải chờ P10 thực hiện V(mutex) trước khi có thể vào khu vực quan trọng, nhưng P10 sẽ luôn giữ mutex và không bao giờ giải phóng nó, dẫn đến tình trạng deadlock. Do đó, số lượng tiến trình nhiều nhất cùng ở trong khu vực quan trọng tại một thời điểm là 1, đó là P10.
+\end{document}

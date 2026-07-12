@@ -1,0 +1,11 @@
+\xpginauxfiletrue 
+\selectlanguage *{vietnamese}
+\contentsline {section}{\numberline {1}Bài tập 2 cuối Slide Bài-6}{3}{section.1}%
+\contentsline {subsection}{\numberline {1.1}Đề bài}{3}{subsection.1.1}%
+\contentsline {subsubsection}{\numberline {1.1.1}Ý thứ nhất}{3}{subsubsection.1.1.1}%
+\contentsline {subsection}{\numberline {1.2}Giải bài tập}{3}{subsection.1.2}%
+\contentsline {subsubsection}{\numberline {1.2.1}Ý thứ 2}{4}{subsubsection.1.2.1}%
+\contentsline {section}{\numberline {2}Bài 2 trong Assignments}{4}{section.2}%
+\contentsline {subsection}{\numberline {2.1}Đề bài}{4}{subsection.2.1}%
+\contentsline {subsection}{\numberline {2.2}Giải bài tập}{4}{subsection.2.2}%
+\xpginauxfilefalse 

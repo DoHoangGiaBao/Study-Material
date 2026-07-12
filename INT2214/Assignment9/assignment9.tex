@@ -1,0 +1,176 @@
+\documentclass[12pt, letterpaper]{article}
+
+% --- Packages ---
+\usepackage{geometry}
+ \geometry{margin=1in}
+\usepackage{graphicx}
+\usepackage{amsmath, amssymb}
+\usepackage{booktabs}
+\usepackage{hyperref}
+\usepackage{cite}
+\usepackage{setspace}
+\onehalfspacing
+\usepackage{fontspec}
+\usepackage{polyglossia}
+\usepackage{float}
+\usepackage{svg}
+\usepackage{enumitem}
+\setmainlanguage{vietnamese}
+
+\usepackage{listings}
+\usepackage{xcolor}
+
+\lstset{
+    language=C,
+    basicstyle=\ttfamily\small,
+    keywordstyle=\color{blue},
+    stringstyle=\color{red},
+    commentstyle=\color{green!60!black},
+    breaklines=true,
+    frame=single, % Tạo khung xung quanh code
+    backgroundcolor=\color{gray!5}
+}
+
+\renewcommand{\lstlistingname}{Mã nguồn}
+
+% --- Metadata ---
+\title{Giải bài tập slide trang 29, 34, 35 Bài 5}
+\author{Đỗ Hoàng Gia Bảo - 23020783 \\ \small Khoa Điện tử - Viễn Thông}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+Báo cáo sẽ trình bày các bài tập tại slide trang 29, 34, 35 \texttt{Bài-5}
+\end{abstract}
+% --- Front Matter (Roman Numerals) ---
+\newpage
+\tableofcontents
+
+% --- Main Content (Arabic Numerals) ---
+\newpage
+\pagenumbering{arabic}
+\setcounter{page}{3} % This automatically resets the counter to 1
+
+\section{Bài tập slide trang 29}
+\subsection{Nội dung bài tập}
+\begin{table}[H]
+    \centering
+    \begin{tabular}{|c|c|c|c|}
+        \toprule
+        & \textbf{Allocation} & \textbf{Need} & \textbf{Available} \\
+        & A B C & A B C & A B C \\
+        \midrule
+        $P_0$ & 0 1 0 & 7 4 3 & 2 3 0 \\
+        $P_1$ & 3 0 2 & 0 2 0 &\\
+        $P_2$ & 3 0 2 & 6 0 0 &\\
+        $P_3$ & 2 1 1 & 0 1 1 &\\
+        $P_4$ & 0 0 2 & 4 3 1 &\\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+\begin{itemize}
+    \item Thực thi thuật toán an toàn thì chuỗi < $P_1, P_3, P_4, P_0, P_2$ > thoả mãn điều kiện an toàn
+    \item Liệu yêu cầu (3, 3, 0) bởi $P_4$ được chấp nhận?
+    \item Liệu yêu cầu (0, 2, 0) bởi $P_0$ được chấp nhận?
+\end{itemize}
+
+\subsection{Giải bài tập}
+\subsubsection{Thực thi thuật toán an toàn}
+\textbf{Khởi tạo 2 mảng Finish và Work:}
+\begin{itemize}
+    \item Finish = [false, false, false, false, false]
+    \item Work = [2, 3, 0]
+\end{itemize}
+
+\noindent \textbf{Thực hiện thuật toán an toàn:}
+\begin{itemize}
+    \item $P_1$ có Need <= Work, nên Work = Work + Allocation của $P_1$ = [5, 3, 2], Finish[1] = true
+    \item $P_3$ có Need <= Work, nên Work = Work + Allocation của $P_3$ = [7, 4, 3], Finish[3] = true
+    \item $P_4$ có Need <= Work, nên Work = Work + Allocation của $P_4$ = [7, 4, 5], Finish[4] = true
+    \item $P_0$ có Need <= Work, nên Work = Work + Allocation của $P_0$ = [7, 5, 5], Finish[0] = true
+    \item $P_2$ có Need <= Work, nên Work = Work + Allocation của $P_2$ = [10, 5, 7], Finish[2] = true
+\end{itemize}
+
+\noindent \textbf{Kết luận:} Chuỗi < $P_1, P_3, P_4, P_0, P_2$ > thoả mãn điều kiện an toàn vì tất cả Finish[i] = true.
+
+\subsection{Kiểm tra yêu cầu $P_4$}
+Vì Need của $P_4$ (4, 3, 1) <= Available (2, 3, 0), yêu cầu (3, 3, 0) của $P_4$ không được chấp nhận.
+
+\subsection{Kiểm tra yêu cầu $P_0$}
+Vì Need của $P_0$ (7, 4, 3) <= Available (2, 3, 0), yêu cầu (0, 2, 0) của $P_0$ không được chấp nhận.
+\section{Bài tập slide trang 34, 35}
+\subsection{Nội dung bài tập}
+\begin{table}[H]
+    \centering
+    \begin{tabular}{|c|c|c|c|}
+        \toprule
+        & \textbf{Allocation} & \textbf{Request} & \textbf{Available} \\
+        & A B C & A B C & A B C \\
+        \midrule
+        $P_0$ & 0 1 0 & 0 0 0 & 0 0 0 \\
+        $P_1$ & 2 0 0 & 2 0 2 &\\
+        $P_2$ & 3 0 3 & 0 0 0 &\\
+        $P_3$ & 2 1 1 & 1 0 0 &\\
+        $P_4$ & 0 0 2 & 0 0 2 &\\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+\begin{itemize}
+    \item Chuỗi < $P_0, P_2, P_3, P_1, P_4$ > cho phép $Finish[i]$ = true với tất cả $0 <= i <= n - 1$ 
+    \item $P_2$ yêu cầu thêm một đơn vị tài nguyên C
+\end{itemize}
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}{|c|c|}
+        \toprule
+        & \textbf{Request}\\
+        & A B C\\
+        \midrule
+        $P_0$ & 0 0 0 \\
+        $P_1$ & 2 0 2 \\
+        $P_2$ & 0 0 1 \\
+        $P_3$ & 1 0 0 \\
+        $P_4$ & 0 0 2 \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+\begin{itemize}
+    \item Hệ thống đang ở trạng thái nào?
+\end{itemize}
+
+\subsection{Giải bài tập}
+\subsection{Khởi tạo 2 mảng Finish và Work}
+\begin{itemize}
+    \item Finish = [false, false, false, false, false]
+    \item Work = [0, 0, 0]
+\end{itemize}
+
+\noindent \textbf{Thực hiện thuật toán an toàn:}
+\begin{itemize}
+    \item $P_0$ có Request <= Work, nên Work = Work + Allocation của $P_0$ = [0, 1, 0], Finish[0] = true
+    \item $P_2$ có Request <= Work, nên Work = Work + Allocation của $P_2$ = [3, 1, 3], Finish[2] = true
+    \item $P_3$ có Request <= Work, nên Work = Work + Allocation của $P_3$ = [5, 2, 4], Finish[3] = true
+    \item $P_1$ có Request <= Work, nên Work = Work + Allocation của $P_1$ = [7, 2, 4], Finish[1] = true
+    \item $P_4$ có Request <= Work, nên Work = Work + Allocation của $P_4$ = [7, 2, 6], Finish[4] = true
+\end{itemize}
+
+\noindent \textbf{Kết luận:} Chuỗi < $P_0, P_2, P_3, P_1, P_4$ > cho phép $Finish[i]$ = true với tất cả $0 <= i <= n - 1$, do đó hệ thống đang ở trạng thái an toàn.
+
+\subsection{Kiểm tra yêu cầu $P_2$}
+\noindent \textbf{Thực hiện thuật toán an toàn:}
+\begin{itemize}
+    \item $P_0$ có Request <= Work, nên Work = Work + Allocation của $P_0$ = [0, 1, 0], Finish[0] = true
+    \item $P_2$ có Request > Work, nên yêu cầu của $P_2$ không được chấp nhận, Finish[2] = false
+    \item $P_3$ có Request > Work, nên yêu cầu của $P_3$ không được chấp nhận, Finish[3] = false
+    \item $P_1$ có Request > Work, nên yêu cầu của $P_1$ không được chấp nhận, Finish[1] = false
+    \item $P_4$ có Request > Work, nên yêu cầu của $P_4$ không được chấp nhận, Finish[4] = false
+\end{itemize}
+
+\noindent \textbf{Kết luận:} Yêu cầu của $P_2$ không được chấp nhận vì nó vượt quá tài nguyên hiện có, do đó hệ thống đang ở trạng thái không an toàn.
+\end{document}

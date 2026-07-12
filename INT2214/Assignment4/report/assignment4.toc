@@ -1,0 +1,12 @@
+\xpginauxfiletrue 
+\selectlanguage *{vietnamese}
+\contentsline {section}{\numberline {1}Nội dung tổng quan bài tập}{3}{section.1}%
+\contentsline {section}{\numberline {2}Giải bài tập}{3}{section.2}%
+\contentsline {subsection}{\numberline {2.1}Đọc dữ liệu đầu vào từ người dùng}{3}{subsection.2.1}%
+\contentsline {subsection}{\numberline {2.2}Chia câu lệnh thành các phần mã nhỏ (token)}{3}{subsection.2.2}%
+\contentsline {subsection}{\numberline {2.3}Xử lý chạy lệnh trong tiến trình con}{4}{subsection.2.3}%
+\contentsline {subsection}{\numberline {2.4}Thực hiện lệnh trong tiến trình con}{4}{subsection.2.4}%
+\contentsline {subsection}{\numberline {2.5}Tạo tính năng lưu lịch sử output của giao diện}{5}{subsection.2.5}%
+\contentsline {subsection}{\numberline {2.6}Xử lý điều hướng \texttt {">", "<"}}{5}{subsection.2.6}%
+\contentsline {subsection}{\numberline {2.7}Giao tiếp đường ống (pipe)}{7}{subsection.2.7}%
+\xpginauxfilefalse 

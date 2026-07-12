@@ -1,0 +1,14 @@
+\xpginauxfiletrue 
+\selectlanguage *{vietnamese}
+\contentsline {section}{\numberline {1}Tổng quan về mođun của nhân hệ điều hành}{3}{section.1}%
+\contentsline {subsection}{\numberline {1.1}Lệnh liệt kê các mođun}{3}{subsection.1.1}%
+\contentsline {subsection}{\numberline {1.2}File mođun mẫu và cách biên dịch}{3}{subsection.1.2}%
+\contentsline {section}{\numberline {2}Tải, gỡ bỏ mođun và clear log hệ thống}{5}{section.2}%
+\contentsline {subsection}{\numberline {2.1}Tải và gỡ bỏ mođun}{5}{subsection.2.1}%
+\contentsline {subsection}{\numberline {2.2}Xóa bộ đệm lưu log của nhân hệ điều hành}{7}{subsection.2.2}%
+\contentsline {section}{\numberline {3}Chỉnh sửa file simple.c}{8}{section.3}%
+\contentsline {subsection}{\numberline {3.1}In hằng số GOLDEN\_RATIO\_PRIME trong hàm simple\_init()}{8}{subsection.3.1}%
+\contentsline {subsection}{\numberline {3.2}In giá trị ước chung lớn nhất của 3300 và 24 trong hàm simple\_exit()}{10}{subsection.3.2}%
+\contentsline {subsection}{\numberline {3.3}In giá trị jiffies và Hz trong hàm simple\_init() và simple\_exit()}{12}{subsection.3.3}%
+\contentsline {section}{\numberline {4}Kết luân}{14}{section.4}%
+\xpginauxfilefalse 

@@ -1,0 +1,176 @@
+\documentclass[12pt, letterpaper]{article}
+
+% --- Packages ---
+\usepackage{geometry}
+ \geometry{margin=1in}
+\usepackage{graphicx}
+\usepackage{amsmath, amssymb}
+\usepackage{booktabs}
+\usepackage{hyperref}
+\usepackage{cite}
+\usepackage{setspace}
+\onehalfspacing
+\usepackage{fontspec}
+\usepackage{polyglossia}
+\usepackage{float}
+\usepackage{svg}
+\usepackage{enumitem}
+\setmainlanguage{vietnamese}
+
+\usepackage{listings}
+\usepackage{xcolor}
+
+\lstset{
+    language=C,
+    basicstyle=\ttfamily\small,
+    keywordstyle=\color{blue},
+    stringstyle=\color{red},
+    commentstyle=\color{green!60!black},
+    breaklines=true,
+    frame=single, % Tạo khung xung quanh code
+    backgroundcolor=\color{gray!5}
+}
+
+\renewcommand{\lstlistingname}{Mã nguồn}
+
+% --- Metadata ---
+\title{Giải bài tập 14}
+\author{Đỗ Hoàng Gia Bảo - 23020783 \\ \small Khoa Điện tử - Viễn Thông}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+\begin{center}
+    Báo cáo sẽ trình bày các bài tập trong slide 33, 34 Bài-9 
+\end{center}
+\end{abstract}
+% --- Front Matter (Roman Numerals) ---
+\newpage
+\tableofcontents
+
+% --- Main Content (Arabic Numerals) ---
+\newpage
+\pagenumbering{arabic}
+\setcounter{page}{3} % This automatically resets the counter to 1
+
+\section{Bài tập 1}
+\subsection{Đề bài}
+\begin{enumerate}[label=\alph*)]
+    \item Ổ cứng của máy tính có kích thước 128 GB, kích thước
+            mỗi khối trên ổ đĩa là 8 KB. Nếu hệ điều hành sử dụng
+            FAT thì dung lượng bộ nhớ nhỏ nhất để lưu FAT là bao
+            nhiêu ? Giải thích.
+    \item Hệ điều hành sử dụng i-node để quản lý các khối dữ liệu
+            của tập tin. I-node của mỗi tập tin chứa số hiệu của 12
+            khối trực tiếp, 1 khối gián tiếp một cấp 1, 1 khối gián tiếp
+            một cấp 2, 1 khối gián tiếp một cấp 3. Kích thước mỗi
+            khối trên ổ đĩa là 4 KB, số hiệu của mối khối chiếm 4
+            byte.
+            \begin{enumerate}[label=\roman*)]
+                \item Tính kích thước lớn nhất của tập tin ?
+                \item Cần bao nhiêu khối trên ổ cứng để chứa được tập 
+                        tin này ?
+            \end{enumerate}
+            (Giả định rằng ổ cứng luôn đủ lớn để chứa được tập tin)
+\end{enumerate}
+\subsection{Giải bài tập}
+\subsubsection{Ý a}
+Vì kích thước của ổ cứng là 128 GB và kích thước của mỗi khối trên ổ đĩa là 8 KB, số khối trong ổ cứng là:
+$$ \text{Số Khối} = \frac{\text{Kích thước ổ cứng}}{\text{kích thước một khối}} $$
+$$ \text{Số khối} = \frac{128 \text{ GB}}{8 \text{ KB}} = 16,777,216 \text{ (khối)} $$
+Số bit cần thiết để mã hóa địa chỉ tất cả số khối trên
+$$ \text{Số bit} = \log_2 (16,777,216) = 24 \text{ (bit)} $$
+Để có thể lưu được số bit địa chỉ trên, kích thước của mỗi entry để lưu một địa chỉ là 24 bit. 
+Đồng thời số địa chỉ mà FAT cần lưu là 16,777,216. Vì vậy kích thước của FAT là:
+$$ \text{Kích thước FAT} = \text{kích thước một entry} \times \text{Số entry} $$
+$$ \text{Kích thước FAT} = 24 \text{ bit} \times 16,777,216 = 402,653,184 \text{ (bit)} \approx 48 \text{ (MB)} $$
+Trong trường hợp theo quy chuẩn của các kiểu FAT, vì cần 24 bit để biểu diễn toàn bộ địa chỉ khối nhớ trong ổ cứng,
+sử dụng chuẩn FAT32 để biểu diễn địa chỉ. Khi đó, kích thước của FAT32 với số entry trên là:
+$$ \text{Kích thước FAT} = \text{kích thước một entry} \times \text{Số entry} $$
+$$ \text{Kích thước FAT} = 32 \text{ bit} \times 16,777,216 = 536,870,912 \text{ (bit)} = 64 \text{ (MB)} $$
+\subsubsection{Ý b}
+I-node của mỗi tập tin chứa số hiệu của 12 khối trực tiếp nên kích thước của các khối trực tiếp đó là:
+$$ \text{Tổng kích thước các khối trực tiếp} = \text{Số khối trực tiếp} \times \text{Kích thước một khối} $$
+$$ \text{Tổng kích thước các khối trực tiếp} = 12 \times 4 \text{ (KB)} = 48 \text{ (KB)} $$
+Vì khối gián tiếp lưu số hiệu mục nên số mục có thể lưu được trên mỗi khối gián tiếp là:
+$$ \text{Số mục} = \frac{\text{Kích thước một khối}}{\text{Kích thước một số hiệu}} = \frac{4 \text{ (KB)}}{4 \text{ (bytes)}} = 1024 \text{ (mục)} $$
+Vì các khối gián tiếp lưu số hiệu của các khối tiếp khác, số khối mỗi loại khối gián tiếp có thể lưu là:
+$$ \text{Khối gián tiếp cấp 1} = \text{Số mục} = 1024 \text{ (mục)} $$
+$$ \text{Khối gián tiếp cấp 2} = \text{Số mục}^2 = 1024^2 \text{ (mục)} $$
+$$ \text{Khối gián tiếp cấp 3} = \text{Số mục}^3 = 1024^3 \text{ (mục)} $$
+Từ các kết quả trên, tổng số khối dữ liệu là:
+$$\text{Tổng số khối dữ liệu} = 12 + 1024 + 1024^2 + 1024^3 = 1,074,791,436 \text{ khối}$$
+Kích thước tập tin lớn nhất khi nó sử dụng tất cả các khối. Vì vậy kích thước lớn nhất của tập tin là:
+$$\text{Kích thước tập tin} = 1,074,791,436 \times 4 \text{ KB} \approx 4 \text{ (TB)}$$
+\textbf{Kết luận}
+\begin{enumerate}[label=\roman*)]
+    \item $ \text{Kích thước lớn nhất của tập tin} \approx 4 \text{ (TB)} $
+    \item $ \text{Số khối trên ổ cứng để chứa được tập tin} = 1,074,791,436 \text{ (Khối)} $
+\end{enumerate}
+\section{Bài tập 2}
+\subsection{Đề bài}
+Một tập tin được lưu trên 100 khối. Giả định rằng khối điều
+khiển tập tin (và các khối chỉ mục nếu có) đều đã được
+chuyển vào bộ nhớ trong. Tính số lần truy cập vào ổ đĩa để:
+\begin{enumerate}[label=\alph*)]
+    \item Thêm một khối vào đầu tập tin
+    \item Thêm một khối vào cuối tập tin
+    \item Bỏ một khối đầu tập tin
+    \item Bỏ một khối cuối tập tin
+\end{enumerate}
+khi sử dụng phương thức cấp phát liên tục, danh sách liên
+kết, và chỉ mục. Biết rằng với phương thức cấp phát liên tục,
+chỉ có thể mở rộng tập tin về phía cuối tập tin. Thông tin của
+các khối thêm vào được lưu ở trong bộ nhớ.
+\subsection{Giải bài tập}
+\begin{enumerate}
+    \item Phương thức cấp phát liên tục
+            \begin{enumerate}[label=\alph*)]
+                \item Thêm một khối vào đầu tập tin
+                
+                Để thêm được khối ở đầu, cần phải tìm vùng mới gồm 101 khối và chép lại toàn bộ tập tin. Cần đọc 100 khối cũ và ghi 101 khối mới nên tổng là $100 + 101 = 201 \text{ lần}$
+                \item Thêm một khối vào cuối tập tin
+                
+                Vì cấp phát liên tục chỉ có thể mở rộng về cuối, chỉ cần ghi thêm 1 khối mới (1 lần). Tuy nhiên, nếu khối ngay sau đó không trống thì cần tìm vùng trống liên tục mới nên sẽ tốn $100 + 101 = 201 \text{ lần}$
+                \item Bỏ một khối đầu tập tin
+                
+                Vì dữ liệu liên tục nên phải tách 99 khối sau. $\text{Đọc 99 khối} + \text{Ghi lại 99 khối} = 198 \text{ (lần)} $
+                \item Bỏ một khối cuối tập tin
+                
+                Vì chỉ giảm kích thước của file đi một khối nên không cần đọc ghi dữ liệu $\rightarrow 0 \text{ (lần)} $
+            \end{enumerate}
+    \item Phương thức cấp phát liên kết
+            \begin{enumerate}[label=\alph*)]
+                \item Thêm một khối vào đầu tập tin
+                
+                Vì phương thức sử dụng danh sách liên kết, thêm khối đầu chỉ cần trỏ đến khối đầu cũ $\rightarrow 0 \text{ (lần)} $
+                \item Thêm một khối vào cuối tập tin
+                
+                Vì con trỏ phải cập nhật để đi về cuối. Đọc lần lượt để tìm khối cuối mất 100 lần, ghi khối cuối để cập nhật con trỏ (-1) mất 1 lần và ghi khối mới mất 1 lần $\rightarrow 100 + 1 + 1 = 102 \text{ (lần)} $
+                \item Bỏ một khối đầu tập tin
+
+                Chỉ cần đổi con trỏ đầu sang khối kế tiếp nên không cần truy cập dữ liệu trên đĩa $\rightarrow 0 \text{ (lần)} $
+                \item Bỏ một khối cuối tập tin
+                
+                Đọc 99 khối để tìm khối áp cuối, ghi khối cuối (-1) $\rightarrow 99 + 1 = 100 \text{ (lần)} $
+            \end{enumerate}
+    \item Phương thức cấp phát chỉ mục
+            \begin{enumerate}[label=\alph*)]
+                \item Thêm một khối vào đầu tập tin
+                
+                Ghi khối dữ liệu mới vào bất cứ khối trống nào và cập nhật khối chỉ mục trên RAM $\rightarrow 1 \text{ (lần)}$
+                \item Thêm một khối vào cuối tập tin 
+                
+                Ghi khối mới vào ổ đĩa. Sau đó, thêm địa chỉ của nó vào cuối danh sách trong khối chỉ mục trên RAM $\rightarrow 1 \text{ (lần)}$
+                \item Bỏ một khối đầu tập tin
+                
+                Khối chỉ mục trên RAM xóa bỏ địa chỉ của Khối 1 $\rightarrow 0 \text{ (lần)}$
+                \item Bỏ một khối cuối tập tin
+                
+                Khối chỉ mục trên RAM xóa bỏ địa chỉ của Khối cuối cùng $\rightarrow 0 \text{ (lần)}$
+            \end{enumerate}
+\end{enumerate}
+\end{document}

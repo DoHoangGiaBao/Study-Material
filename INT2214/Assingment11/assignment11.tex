@@ -1,0 +1,208 @@
+\documentclass[12pt, letterpaper]{article}
+
+% --- Packages ---
+\usepackage{geometry}
+ \geometry{margin=1in}
+\usepackage{graphicx}
+\usepackage{amsmath, amssymb}
+\usepackage{booktabs}
+\usepackage{hyperref}
+\usepackage{cite}
+\usepackage{setspace}
+\onehalfspacing
+\usepackage{fontspec}
+\usepackage{polyglossia}
+\usepackage{float}
+\usepackage{svg}
+\usepackage{enumitem}
+\setmainlanguage{vietnamese}
+
+\usepackage{listings}
+\usepackage{xcolor}
+
+\lstset{
+    language=C,
+    basicstyle=\ttfamily\small,
+    keywordstyle=\color{blue},
+    stringstyle=\color{red},
+    commentstyle=\color{green!60!black},
+    breaklines=true,
+    frame=single, % Tạo khung xung quanh code
+    backgroundcolor=\color{gray!5}
+}
+
+\renewcommand{\lstlistingname}{Mã nguồn}
+
+% --- Metadata ---
+\title{Giải bài tập 11}
+\author{Đỗ Hoàng Gia Bảo - 23020783 \\ \small Khoa Điện tử - Viễn Thông}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+Báo cáo sẽ trình bày các bài tập cuối Slide của Bài 6 và làm bài xếp hạng thuật toán trong bài tập 11
+\end{abstract}
+% --- Front Matter (Roman Numerals) ---
+\newpage
+\tableofcontents
+
+% --- Main Content (Arabic Numerals) ---
+\newpage
+\pagenumbering{arabic}
+\setcounter{page}{3} % This automatically resets the counter to 1
+
+\section{Bài tập 1}
+\subsection{Đề bài}
+Hệ thống sử dụng 12 bit cho địa chỉ ảo và địa chỉ vật lý, kích thước mỗi trang là 256 byte. Dựa vào bảng phân trang sau:
+\begin{table}[H]
+\centering
+\begin{tabular}{cc}
+\toprule
+\textbf{Page no.} & \textbf{Frame no.} \\
+\midrule
+0 & \_ \\
+1 & 2 \\
+2 & 12 \\
+5 & \_ \\
+3 & 10 \\
+4 & \_ \\
+5 & 4 \\
+6 & 3 \\
+7 & \_ \\
+8 & 11 \\
+9 & 0 \\
+\end{tabular}
+\end{table}
+\begin{enumerate}[label=\alph*)]
+    \item Tìm địa chỉ vật lý tương ứng cho các địa chỉ ảo sau (dạng hexa): 9EF, 700, 0FF
+    \item Nếu kích thước mỗi đơn vị bộ nhớ là 4 byte, hãy tính dung lượng bộ nhớ chính, số lượng frame
+\end{enumerate}
+\subsection{Giải bài tập}
+\subsubsection{Câu a}
+\begin{itemize}
+    \item Kích thước mỗi trang là 256 byte = $2^8$ byte $\Rightarrow$ Offset (độ lệch $d$) cần 8 bit
+    \item Số bit dùng số trang (page number $p$) = Tổng số bit - Số bit dùng cho offset = 12 - 8 = 4 bit
+    \item Số bit dùng cho frame number (frame number $f$) = 12 - 8 = 4 bit
+    \item Số trang = $2^p$ = $2^4$ = 16 trang
+    \item Số frame = $2^f$ = $2^4$ = 16 frame
+    \item Địa chỉ ảo 9EF (hexa) = 1001 1110 1111 (binary)
+    \begin{itemize}
+        \item Page number $p$ = 1001 (binary) = 9 (hexa)
+        \item Offset $d$ = 1110 1111 (binary) = EF (hexa)
+        \item Frame number $f$ = 0
+        \item Địa chỉ vật lý = Frame number $f$ + Offset $d$ = 0 + EF = EF (hexa)
+    \end{itemize}
+    \item Địa chỉ ảo 700 (hexa) = 0111 0000 0000 (binary)
+    \begin{itemize}
+        \item Page number $p$ = 0111 (binary) = 7 (hexa)
+        \item Offset $d$ = 0000 0000 (binary) = 00 (hexa)
+        \item Frame number $f$ = \_
+        \item Lỗi trang (page fault) vì page 7 không được ánh xạ vào frame nào
+    \end{itemize}
+    \item Địa chỉ ảo 0FF (hexa) = 0000 1111 1111 (binary)
+    \begin{itemize}
+        \item Page number $p$ = 0000 (binary) = 0 (hexa)
+        \item Offset $d$ = 1111 1111 (binary) = FF (hexa)
+        \item Frame number $f$ = \_
+        \item Lỗi trang (page fault) vì page 0 không được ánh xạ vào frame nào
+    \end{itemize}
+\end{itemize}
+\subsubsection{Câu b}
+\begin{itemize}
+    \item Tổng số địa chỉ vật lý = $2^{12}$ = 4096 byte = 4 KB
+    \item Mỗi đơn vị bộ nhớ là 4 byte $\Rightarrow$ Dung lượng bộ nhớ chính = 4096 byte * 4 byte = 16 KB
+    \item Mỗi frame có kích thước 256 byte = $2^8$ byte $\Rightarrow$ Số frame = Dung lượng bộ nhớ chính / Kích thước mỗi frame = 16 KB / 256 byte = 64 frame
+\end{itemize}
+\section{Bài tập 2}
+\subsection{Đề bài}
+Ánh xạ bộ nhớ ảo 1 GB lên bộ nhớ vật lý có 256 frame,
+mỗi frame có kích thước 4 KB. Kích thước mỗi đơn vị bộ
+nhớ là 1 byte.
+\begin{itemize}
+    \item Liệu bộ nhớ trong chứa được toàn bộ bảng phân trang ?
+Giải thích.
+    \item Liệu bảng phân trang nghịch đảo chứa được trong một
+trang ? Giải thích
+\end{itemize}
+\subsection{Giải bài tập}
+\subsubsection{Ý thứ nhất}
+\begin{itemize}
+    \item Số lượng trang ảo = Dung lượng bộ nhớ ảo / Kích thước trang = $2^{30} / 2^{12} = 2^{18}$ trang.
+    \item Bảng phân trang cần $2^{18}$ mục (entry).
+    \item Kích thước mỗi mục: Để trỏ đến 256 frame vật lý, cần 8 bit = 1 byte cho mỗi mục
+    \item Kích thước bảng phân trang = Số mục $\times$ Kích thước mục = $2^{18} \times 1 \text{ byte} = 256 \text{ KB}$.
+    \item Dung lượng bộ nhớ vật lý (bộ nhớ trong) = $256 \text{ frame} \times 4 \text{ KB/frame} = 1024 \text{ KB} = 1 \text{ MB}$.
+    \item Kết luận: Có. Vì bảng phân trang chiếm tối thiểu 256 KB, hoàn toàn có thể chứa vừa trong bộ nhớ vật lý có dung lượng 1 MB. (Với giả định không có các dữ liệu khác chiếm dụng bộ nhớ vật lý và kích thước mỗi mục trong bảng phân trang là 1 byte)
+\end{itemize}
+\subsubsection{Ý thứ hai}
+\begin{itemize}
+    \item Bảng phân trang nghịch đảo (Inverted Page Table - IPT) chỉ lưu một mục cho mỗi khung trang (frame) vật lý.
+    \item Số lượng mục trong IPT = Số lượng frame = 256 mục.
+    \item Mỗi mục trong IPT cần lưu Số hiệu trang ảo (18 bit, vì có $2^{18}$ trang) và ID tiến trình. Gỉa sử mỗi mục chỉ chiếm khoảng 4 byte.
+    \item Kích thước của bảng phân trang nghịch đảo = $256 \times 4 \text{ byte}$ = 1 KB.
+    \item Kích thước của một trang là 4 KB.
+    \item Kết luận: Có. Vì kích thước của bảng phân trang nghịch đảo (khoảng 1-2 KB) nhỏ hơn nhiều so với kích thước của một trang bộ nhớ (4 KB).
+\end{itemize}
+\section{Bài tập 3}
+\subsection{Đề bài}
+Cho sáu phân vùng bộ nhớ 300 KB, 600 KB, 350 KB, 200 KB, 750 KB và 125 KB (theo thứ tự), làm thế nào First fit, Best fit, Worst fit cấp phát yêu cầu cho các tiến  trình có kích thước 115 KB, 500 KB, 358 KB, 200 KB và 375 KB (theo thứ tự)? \\\\
+
+\noindent Xếp hạng các thuật toán về hiệu quả sử dụng bộ nhớ.
+\subsection{Giải bài tập}
+\begin{itemize}
+    \item First fit:
+    \begin{table}[H]
+    \centering
+    \begin{tabular}{c|c|c}
+    \toprule
+    \textbf{Tiến trình} & \textbf{Phân vùng được cấp} & \textbf{Phân vùng còn lại} \\
+    \midrule
+    P1 (115 KB) & 300 KB & 185 KB \\
+    P2 (500 KB) & 600 KB & 100 KB \\
+    P3 (358 KB) & 750 KB & 392 KB \\
+    P4 (200 KB) & 350 KB & 150 KB \\
+    P5 (375 KB) & 392 KB & 17 KB \\
+    \bottomrule
+    \end{tabular}
+    \end{table}
+    \item Best fit:
+    \begin{table}[H]
+    \centering
+    \begin{tabular}{c|c|c}
+    \toprule
+    \textbf{Tiến trình} & \textbf{Phân vùng được cấp} & \textbf{Phân vùng còn lại} \\
+    \midrule
+    P1 (115 KB) & 125 KB & 10 KB \\
+    P2 (500 KB) & 600 KB & 100 KB \\
+    P3 (358 KB) & 750 KB & 392 KB \\
+    P4 (200 KB) & 200 KB & 0 KB \\
+    P5 (375 KB) & 392 KB & 17 KB \\
+    \bottomrule
+    \end{tabular}
+    \end{table}
+    \item Worst fit:
+    \begin{table}[H]
+    \centering
+    \begin{tabular}{c|c|c}
+    \toprule
+    \textbf{Tiến trình} & \textbf{Phân vùng được cấp} & \textbf{Phân vùng còn lại} \\
+    \midrule
+    P1 (115 KB) & 750 KB & 635 KB \\
+    P2 (500 KB) & 635 KB & 135 KB \\
+    P3 (358 KB) & 600 KB & 242 KB \\
+    P4 (200 KB) & 350 KB & 150 KB \\
+    P5 (375 KB) & 300 KB & Không đủ bộ nhớ \\
+    \bottomrule
+    \end{tabular}
+    \end{table}
+    \item Xếp hạng các thuật toán về hiệu quả sử dụng bộ nhớ:
+    \begin{itemize}
+        \item Best fit và First fit hiệu quả nhất vì đáp ứng được tất cả các yêu cầu cấp phát bộ nhớ. Best fit tối ưu hơn một chút do giữ lại được các khối bộ nhớ lớn nguyên vẹn (như khối 300, 350) cho các tiến trình tiềm năng trong tương lai.
+        \item Worst fit kém hiệu quả nhất do chia nhỏ các phân vùng lớn quá sớm, dẫn đến sự phân mảnh và không đủ vùng nhớ liên tục cho tiến trình cuối cùng.
+        \item Xếp hạng: Best Fit $\approx$ First Fit > Worst Fit (Best fit và First fit tốt ngang nhau về khả năng phục vụ toàn bộ chuỗi này, Worst fit kém nhất).
+    \end{itemize}
+\end{itemize}
+\end{document}

@@ -1,0 +1,118 @@
+\documentclass[12pt, letterpaper]{article}
+
+% --- Packages ---
+\usepackage{geometry}
+ \geometry{margin=1in}
+\usepackage{graphicx}
+\usepackage{amsmath, amssymb}
+\usepackage{booktabs}
+\usepackage{hyperref}
+\usepackage{cite}
+\usepackage{setspace}
+\onehalfspacing
+\usepackage{fontspec}
+\usepackage{polyglossia}
+\usepackage{float}
+\usepackage{svg}
+\usepackage{enumitem}
+\setmainlanguage{vietnamese}
+
+\usepackage{listings}
+\usepackage{xcolor}
+
+\lstset{
+    language=C,
+    basicstyle=\ttfamily\small,
+    keywordstyle=\color{blue},
+    stringstyle=\color{red},
+    commentstyle=\color{green!60!black},
+    breaklines=true,
+    frame=single, % Tạo khung xung quanh code
+    backgroundcolor=\color{gray!5}
+}
+
+\renewcommand{\lstlistingname}{Mã nguồn}
+
+% --- Metadata ---
+\title{Giải bài tập 12}
+\author{Đỗ Hoàng Gia Bảo - 23020783 \\ \small Khoa Điện tử - Viễn Thông}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+Báo cáo sẽ trình bày phần làm bài tập 2 cuối Slide Bài-6 và phần Bài 2 trong Assignments
+\end{abstract}
+% --- Front Matter (Roman Numerals) ---
+\newpage
+\tableofcontents
+
+% --- Main Content (Arabic Numerals) ---
+\newpage
+\pagenumbering{arabic}
+\setcounter{page}{3} % This automatically resets the counter to 1
+
+\section{Bài tập 2 cuối Slide Bài-6}
+\subsection{Đề bài}
+\subsubsection{Ý thứ nhất}
+Ánh xạ bộ nhớ ảo 1 GB lên bộ nhớ vật lý có 256 frame,
+mỗi frame có kích thước 4 KB. Kích thước mỗi đơn vị bộ
+nhớ là 1 byte.
+\begin{itemize}
+    \item Liệu bộ nhớ trong chứa được toàn bộ bảng phân trang ? Giải thích.
+    \item Liệu bảng phân trang nghịch đảo chứa được trong một trang ? Giải thích
+\end{itemize}
+\subsection{Giải bài tập}
+\textbf{Kích thước bộ nhớ vật lý}
+\begin{align*}
+    \text{Kích thước bộ nhớ vật lý} &= \text{Số frame} \times \text{Kích thước mỗi frame} \\
+    &= 256 \times 4 \text{ KB} \\
+    &= 256 \times 4096 \text{ bytes} \\
+    &= 1,048,576 \text{ bytes} = 1 \text{ MB}
+\end{align*}
+\textbf{Số trang trong bảng phân trang}
+\begin{align*}
+    \text{Số trang trong bảng phân trang} &= \frac{\text{Kích thước bộ nhớ ảo}}{\text{Kích thước mỗi trang}} \\
+    &= \frac{1024 \text{ MB}}{4 \text{ KB}} \\
+    &= \frac{1024 \times 1024 \text{ KB}}{4 \text{ KB}} \\
+    &= 262144 \text{ trang}
+\end{align*}
+Vì bộ nhớ vật lý có 256 frame nên số bit để biểu diễn frame là $\log_2(256) = 8$ bit. \\
+Giả sử  mỗi mục chỉ lưu trữ địa chỉ frame, thì mỗi mục sẽ chiếm 8 bit. \\
+\textbf{Kích thước bảng phân trang}
+\begin{align*}
+    \text{Kích thước bảng phân trang} &= \text{Số trang} \times \text{Kích thước mỗi mục} \\
+    &= 262144 \times 8 \text{ bit} \\
+    &= 2097152 \text{ bit} = 262144 \text{ bytes} = 256 \text{ KB}
+\end{align*}
+\textbf{Kết luận}
+
+Bộ nhớ vật lý có kích thước 1 MB, trong khi bảng phân trang chiếm 256 KB. Do đó, bộ nhớ vật lý có thể chứa được toàn bộ bảng phân trang. \\
+\subsubsection{Ý thứ 2}
+Trong bảng phân trang nghịch đảo, số mục trong bảng phân trang bằng với số frame trong bộ nhớ vật lý. Vì bộ nhớ vật lý có 256 frame, nên bảng phân trang nghịch đảo sẽ có 256 mục. Mỗi mục sẽ chiếm 8 bit để lưu trữ địa chỉ frame. \\
+\textbf{Kích thước bảng phân trang nghịch đảo}
+\begin{align*}
+    \text{Kích thước bảng phân trang nghịch đảo} &= \text{Số mục} \times \text{Kích thước mỗi mục} \\
+    &= 256 \times 8 \text{ bit} \\
+    &= 2048 \text{ bit} = 256 \text{ bytes}
+\end{align*}
+\textbf{Kết luận}
+
+Bảng phân trang nghịch đảo chỉ chiếm 256 bytes, do đó nó có thể chứa được trong một trang (4 KB).
+\section{Bài 2 trong Assignments}
+\subsection{Đề bài}
+Tỉ lệ trúng TLB $\alpha=80\%$, thời gian truy cập bộ nhớ  chính (RAM) 100 ns, thời gian truy cập cache là 10ns. Tính thời gian truy cập  hiệu quả nội  dung của tiến trình.
+\subsection{Giải bài tập}
+\begin{itemize}
+    \item Thời gian truy cập nếu qua TLB (hit) = thời gian truy cập cache + thời gian truy cập RAM = 10 ns + 100 ns = 110 ns. \\
+    \item Thời gian truy cập nếu không qua TLB (miss) = thời gian truy cập cache + thời gian truy cập RAM (vào bảng phân trang trong RAM) + thời gian truy cập RAM = 10 ns + 100 ns + 100 ns = 210 ns. \\
+\end{itemize}
+\textbf{Thời gian truy cập hiệu quả (EAT)}
+\begin{align*}
+    EAT &= 0.8 \times 110 \text{ ns} + 0.2 \times 210 \text{ ns} \\
+    &= 88 \text{ ns} + 42 \text{ ns} \\
+    &= 130 \text{ ns}
+\end{align*}
+\end{document}

@@ -1,0 +1,16 @@
+\xpginauxfiletrue 
+\selectlanguage *{vietnamese}
+\contentsline {section}{\numberline {1}Bài tập 1}{3}{section.1}%
+\contentsline {subsection}{\numberline {1.1}Đề bài}{3}{subsection.1.1}%
+\contentsline {subsection}{\numberline {1.2}Giải bài tập}{3}{subsection.1.2}%
+\contentsline {subsubsection}{\numberline {1.2.1}Câu a}{3}{subsubsection.1.2.1}%
+\contentsline {subsubsection}{\numberline {1.2.2}Câu b}{4}{subsubsection.1.2.2}%
+\contentsline {section}{\numberline {2}Bài tập 2}{4}{section.2}%
+\contentsline {subsection}{\numberline {2.1}Đề bài}{4}{subsection.2.1}%
+\contentsline {subsection}{\numberline {2.2}Giải bài tập}{5}{subsection.2.2}%
+\contentsline {subsubsection}{\numberline {2.2.1}Ý thứ nhất}{5}{subsubsection.2.2.1}%
+\contentsline {subsubsection}{\numberline {2.2.2}Ý thứ hai}{5}{subsubsection.2.2.2}%
+\contentsline {section}{\numberline {3}Bài tập 3}{5}{section.3}%
+\contentsline {subsection}{\numberline {3.1}Đề bài}{5}{subsection.3.1}%
+\contentsline {subsection}{\numberline {3.2}Giải bài tập}{6}{subsection.3.2}%
+\xpginauxfilefalse 

@@ -1,0 +1,227 @@
+\documentclass[12pt, letterpaper]{article}
+
+% --- Packages ---
+\usepackage{geometry}
+ \geometry{margin=1in}
+\usepackage{graphicx}
+\usepackage{amsmath, amssymb}
+\usepackage{booktabs}
+\usepackage{hyperref}
+\usepackage{cite}
+\usepackage{setspace}
+\onehalfspacing
+\usepackage{fontspec}
+\usepackage{polyglossia}
+\usepackage{float}
+\usepackage{svg}
+\setmainlanguage{vietnamese}
+
+\usepackage{listings}
+\usepackage{xcolor}
+
+\lstset{
+    language=C,
+    basicstyle=\ttfamily\small,
+    keywordstyle=\color{blue},
+    stringstyle=\color{red},
+    commentstyle=\color{green!60!black},
+    breaklines=true,
+    frame=single, % Tạo khung xung quanh code
+    backgroundcolor=\color{gray!5}
+}
+
+\renewcommand{\lstlistingname}{Mã nguồn}
+
+% --- Metadata ---
+\title{Project 1 - Unix Shell}
+\author{Đỗ Hoàng Gia Bảo - 23020783 \\ \small Khoa Điện tử - Viễn Thông}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+Báo cáo sẽ trình bày các bước để tạo ra một giao diện shell cho người dùng sử dụng và thực thi các lệnh đó.
+\end{abstract}
+% --- Front Matter (Roman Numerals) ---
+\newpage
+\tableofcontents
+
+% --- Main Content (Arabic Numerals) ---
+\newpage
+\pagenumbering{arabic}
+\setcounter{page}{3} % This automatically resets the counter to 1
+
+\section{Nội dung tổng quan bài tập}
+Nhiệm vụ của bài tập yêu cầu là thiết kế một giao diện shell có thể chấp nhận lệnh từ người dùng và thực hiện các câu lệnh đó trong một tiến trình khác. Giao diện cần phải hỗ trợ chuyển hướng đầu vào, đầu ra và đường ống để  hình thành giao tiếp 2 chiều giữa các cặp lệnh.
+\section{Giải bài tập}
+\subsection{Đọc dữ liệu đầu vào từ người dùng}
+Để có thể đọc được dữ liệu người dùng, ta sử dụng hàm fgets() để lưu dữ liệu từ người dùng vào một bộ nhớ đệm.
+\begin{lstlisting}[language=C, caption={Tham số hàm fgets()}]
+    fgets(input_buffer, MAX_LINE, stdin)
+\end{lstlisting}
+\begin{itemize}
+    \item input\_buffer: Bộ nhớ đệm để lưu dữ liệu nhập từ người dùng 
+    \item MAX\_LINE: Giới hạn độ dài của câu lệnh
+    \item stdin: Luồng dữ liệu đầu vào từ bàn phím
+\end{itemize}
+\subsection{Chia câu lệnh thành các phần mã nhỏ (token)}
+\begin{lstlisting}[language=C, caption={logic chia lệnh thành các mã nhỏ (token)}]
+    // Split command string into tokens using strtok()
+        char *token;
+        int i = 0;
+
+        // Get the first token (The command itself)
+        token = strtok(input_buffer, " ");
+
+        while (token != NULL) {
+            // Store the pointer to the word in the array
+            args[i] = token; 
+            i++;
+
+            // Get the next token (the arguments)
+            // Passing NULL tells strtok to continue with inputBuffer
+            token = strtok(NULL, " ");
+        }
+\end{lstlisting}
+Hàm \textbf{strtok} nhận vào chuỗi \textbf{input\_buffer} và ký tự phân cách là khoảng trắng " ".
+Nó sẽ tìm khoảng trắng đầu tiên, thay thế nó bằng ký tự kết thúc chuỗi \textbf{\textbackslash 0}, và trả về địa chỉ bắt đầu của từ đó.\\
+Ví dụ: Nếu lệnh nhập là \textbf{"ls -l -a"}, token lúc này sẽ trỏ đến chữ \textbf{"ls"}.\\\\
+\textbf{args[i] = token;}: Lưu địa chỉ của từ vừa tìm được vào mảng args.
+\textbf{token = strtok(NULL, " ");}: Khi truyền \textbf{NULL} vào tham số thứ nhất, \textbf{strtok} hiểu rằng nó cần tiếp tục xử lý chuỗi cũ (\textbf{input\_buffer}) từ vị trí nó vừa dừng lại.\\
+Vòng lặp sẽ chạy cho đến khi không còn từ nào nữa (hàm trả về \textbf{NULL}).
+\subsection{Xử lý chạy lệnh trong tiến trình con}
+Để tạo tiến trình con, sử dụng hàm \textbf{fork()}
+\begin{lstlisting}[language=C, caption={Sử dụng hàm fork() để tạo tiến trình con}]
+    pid_t pid = fork();
+\end{lstlisting}
+\begin{itemize}
+    \item pid < 0: tiến trình con không được khởi tạo thành công.
+    \item pid == 0: Tiến trình con được khởi tạo thành công.
+\end{itemize}
+\subsection{Thực hiện lệnh trong tiến trình con}
+Trong tiến trình con, để có thể thực hiện được lệnh lưu trong \textbf{input\_buffer}, tiến trình con sử dụng hàm \textbf(execvp()).
+\begin{lstlisting}[language=C, caption={Sử dụng hàm \textbf{execvp()} để thực hiện lệnh}]
+    // execvp(command, array_of_args)
+    execvp(args[0], args)
+\end{lstlisting}
+\begin{itemize}
+    \item \textbf{args[0]}: địa chỉ lưu câu lệnh.
+    \item \textbf{args}: Phần lưu các tham số truyền cùng với lệnh.
+\end{itemize}
+\subsection{Tạo tính năng lưu lịch sử output của giao diện}
+Khi người dùng nhập \texttt{"!!"}, giao diện shell sẽ in ra lịch sử các output được lưu.
+\begin{lstlisting}[language=C, caption={Logic xử lý lệnh \texttt{"!!"}}]
+    // Check if user has input the history command
+        if (strcmp(input_buffer, "!!") == 0) {
+            if (!has_history) {
+                printf("No command in history\n");
+                continue;
+            }
+
+            // Copy saved history to input buffer and echo the command
+            strcpy(input_buffer, history);
+            printf("%s\n", input_buffer);
+        } else {
+            // Update the history buffer to store the new command
+            strcpy(history, input_buffer);
+            has_history = 1;
+        }
+\end{lstlisting}
+Hàm \textbf{strcmp} (String Compare) so sánh nội dung người dùng vừa nhập (\textbf{input\_buffer}) với chuỗi \texttt{"!!"}.\\
+\begin{itemize}
+    \item Nếu chưa có lịch sử, chương trình sẽ báo lỗi \textbf{No command in history}.
+    \item Nếu có lịch sử, sử dụng hàm \textbf{strcpy} để sao chép lịch sử trong bộ nhớ đệm \textbf{history} đè vào \textbf{input\_buffer}
+    \item Nếu nhập lệnh bình thường, bộ đệm lịch sử sẽ được cập nhật để lưu lệnh đó.
+\end{itemize}
+\subsection{Xử lý điều hướng \texttt{">", "<"}}
+Để có thể xử lý điều hướng, cần phải ghi hoặc tạo file và đọc, viết nó.
+\begin{lstlisting}[language=C, caption={Logic xử lý điều hướng}]
+    for (int i = 0; args[i] != NULL; i++) {
+        // Check for ouput redirection ">"
+        if (strcmp(args[i], ">") == 0) {
+            char *filename = args[i + 1];
+            // Open file: Write only. Create if Missing. Truncate if exists
+            int fd = open(filename, O_WRONLY | O_CREAT | O_TRUNC, 0644);
+            if (fd < 0) {
+                perror("Error opening output file\n");
+                return 1;
+            }
+            dup2(fd, STDOUT_FILENO); // Redirect STDOUT to file
+            close(fd); // Close original descriptor
+            args[i] = NULL; // Chop the args array here
+            break;
+        }
+        // Check for input redirection "<" 
+        else if (strcmp(args[i], "<") == 0) {
+            char *filename = args[i + 1];
+            int fd = open(filename, O_RDONLY); // Open for reading
+            if (fd < 0) {
+                perror("Error opening input file\n");
+                return 1;
+            }
+            dup2(fd, STDIN_FILENO); // Redirect STDIN to file
+            close(fd); // Close original descriptor
+            args[i] = NULL; // Chop the args array here
+            break;
+        }
+    }
+\end{lstlisting}
+\begin{itemize}
+    \item \textbf{Tìm kiếm toán tử:} Vòng lặp \texttt{for} duyệt qua danh sách tham số để xác định người dùng muốn điều hướng đầu vào (\texttt{<}) hay đầu ra (\texttt{>}).
+    \item \textbf{Mở tệp (\texttt{open}):} 
+        \begin{itemize}
+            \item Với điều hướng đầu ra: Tệp được mở với các cờ \texttt{O\_WRONLY} (chỉ ghi), \texttt{O\_CREAT} (tạo nếu chưa có) và \texttt{O\_TRUNC} (xóa nội dung cũ). Quyền truy cập \texttt{0644} cho phép chủ sở hữu đọc/ghi và người khác chỉ đọc.
+            \item Với điều hướng đầu vào: Tệp được mở ở chế độ \texttt{O\_RDONLY} (chỉ đọc).
+        \end{itemize}
+    \item \textbf{Chuyển hướng luồng (\texttt{dup2}):} Hàm \texttt{dup2(fd, STDOUT\_FILENO)} hoặc \texttt{dup2(fd, STDIN\_FILENO)} sẽ ánh xạ tệp vừa mở vào luồng chuẩn tương ứng của hệ thống.
+    \item \textbf{Làm sạch tham số:} Lệnh \texttt{args[i] = NULL} cực kỳ quan trọng để ngăn hàm \texttt{execvp} coi toán tử điều hướng và tên tệp là các đối số của lệnh chính.
+\end{itemize}
+
+\subsection{Giao tiếp đường ống (pipe)}
+Cơ chế đường ống (\textit{Pipes}) cho phép thiết lập giao tiếp giữa hai tiến trình theo nguyên lý \textit{Producer-Consumer}.
+\begin{lstlisting}[language=C, caption={Logic xử lý giao tiếp đường ống}]
+    // Process pipe logic
+    if (pipe_index != -1) {
+        int fd[2];
+        if (pipe(fd) == -1) {
+            perror("Pipe failed");
+            return 1;
+        }
+
+        pid_t p2 = fork();
+
+        if (p2 < 0) {
+            perror("Fork failed");
+            return 1;
+        }
+
+        if (p2 == 0) {
+            // GRANDCHILD: Runs the first command
+            dup2(fd[1], STDOUT_FILENO); // Redirect stdout to pipe write-end
+            close(fd[0]); // Close unused read-end
+            close(fd[1]); // Close write-end after dup
+            execvp(args[0], args);
+            exit(1);
+        } else {
+            // CHILD: Runs the second command
+            dup2(fd[0], STDIN_FILENO); // Redirect stdin to pipe read-end
+            close(fd[1]); // Close unused write-end
+            close(fd[0]); // Close read-end after dup
+            execvp(args[pipe_index + 1], &args[pipe_index + 1]);
+            exit(1);
+        }
+    }
+\end{lstlisting}
+\begin{itemize}
+    \item \textbf{Khởi tạo đường ống:} Hàm \texttt{pipe(fd)} tạo ra hai bộ mô tả tệp: \texttt{fd[0]} để đọc và \texttt{fd[1]} để ghi.
+    \item \textbf{Tách tiến trình:} Shell thực hiện \texttt{fork()} thêm một lần nữa. Tiến trình cháu thực thi lệnh đứng trước dấu ống dẫn, tiến trình con thực thi lệnh đứng sau.
+    \item \textbf{Kết nối luồng dữ liệu:}
+        \begin{itemize}
+            \item Tiến trình cháu sử dụng \texttt{dup2} để ánh xạ \texttt{STDOUT} vào \texttt{fd[1]}.
+            \item Tiến trình con sử dụng \texttt{dup2} để ánh xạ \texttt{STDIN} vào \texttt{fd[0]}.
+        \end{itemize}
+    \item \textbf{Đóng mô tả tệp thừa:} Sau khi ánh xạ, các bản sao cũ của \texttt{fd[0]} và \texttt{fd[1]} cần được đóng ngay lập tức để hệ thống có thể gửi tín hiệu kết thúc tệp (EOF) một cách chính xác.
+\end{itemize}
+\end{document}

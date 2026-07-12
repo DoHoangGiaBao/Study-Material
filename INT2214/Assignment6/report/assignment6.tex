@@ -1,0 +1,121 @@
+\documentclass[12pt, letterpaper]{article}
+
+% --- Packages ---
+\usepackage{geometry}
+ \geometry{margin=1in}
+\usepackage{graphicx}
+\usepackage{amsmath, amssymb}
+\usepackage{booktabs}
+\usepackage{hyperref}
+\usepackage{cite}
+\usepackage{setspace}
+\onehalfspacing
+\usepackage{fontspec}
+\usepackage{polyglossia}
+\usepackage{float}
+\usepackage{svg}
+\usepackage{enumitem}
+\setmainlanguage{vietnamese}
+
+\usepackage{listings}
+\usepackage{xcolor}
+
+\lstset{
+    language=C,
+    basicstyle=\ttfamily\small,
+    keywordstyle=\color{blue},
+    stringstyle=\color{red},
+    commentstyle=\color{green!60!black},
+    breaklines=true,
+    frame=single, % Tạo khung xung quanh code
+    backgroundcolor=\color{gray!5}
+}
+
+\renewcommand{\lstlistingname}{Mã nguồn}
+
+% --- Metadata ---
+\title{Lập trình các thuật toán lập lịch CPU}
+\author{Đỗ Hoàng Gia Bảo - 23020783 \\ \small Khoa Điện tử - Viễn Thông}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+Báo cáo sẽ trình bày các bước lập trình các thuật toán lập lịch CPU:  FCFS, SJF  (cho phép dừng, không cho phép dừng), Lập lịch ưu tiên (cho phép dừng, không cho phép dừng), Round Robin, Hàng đợi đa cấp, Hàng đợi đa cấp phản hồi 
+\end{abstract}
+% --- Front Matter (Roman Numerals) ---
+\newpage
+\tableofcontents
+
+% --- Main Content (Arabic Numerals) ---
+\newpage
+\pagenumbering{arabic}
+\setcounter{page}{3} % This automatically resets the counter to 1
+
+\section{Giải thích các thuật toán lập lịch CPU trong chương trình}
+
+Chương trình sử dụng ngôn ngữ Python với thư viện Tkinter để mô phỏng các thuật toán lập lịch. Báo cáo sẽ trình bày từng thuật toán được cài đặt:
+
+\subsection{Cấu trúc dữ liệu và Lập lịch không cho phép dừng (Non-Preemptive)}
+
+Mỗi tiến trình được quản lý bởi lớp \texttt{Process} lưu trữ các thông số: \textit{PID, Arrival Time, Burst Time, Priority} và các biến trạng thái như \texttt{remaining\_time}.
+
+\begin{itemize}
+    \item \textbf{First-Come, First-Served (FCFS):} 
+    Đây là thuật toán đơn giản nhất. Mã nguồn thực hiện sắp xếp danh sách tiến trình theo \texttt{arrival\_time}. CPU phục vụ tiến trình nào đến trước cho đến khi kết thúc (\texttt{curr + p.burst}).
+    
+    \item \textbf{Shortest Job First (SJF - Non-Pre):} 
+    Tại mỗi thời điểm CPU rảnh, chương trình tìm trong danh sách các tiến trình đã đến (\texttt{p.arrival <= curr}) tiến trình có \texttt{burst\_time} nhỏ nhất để thực thi. Do là không cho phép dừng, tiến trình sẽ chạy trọn vẹn thời gian thực hiện.
+    
+    \item \textbf{Priority (Non-Pre):} 
+    Tương tự như SJF, nhưng thay vì chọn theo thời gian thực hiện, CPU chọn tiến trình có chỉ số \texttt{priority} nhỏ nhất (ưu tiên cao nhất).
+\end{itemize}
+
+\subsection{Lập lịch cho phép dừng (Preemptive)}
+
+Trong các thuật toán này, CPU liên tục kiểm tra lại danh sách tiến trình mỗi khi có một đơn vị thời gian trôi qua hoặc có tiến trình mới đến.
+
+\begin{itemize}
+    \item \textbf{Shortest Remaining Time First (SRTF/SJF Preemptive):} 
+    Hàm \texttt{algo\_sjf\_preemptive} thực hiện vòng lặp \texttt{while completed < n}. Tại mỗi đơn vị thời gian (\texttt{curr\_time}), nó chọn tiến trình có \texttt{remaining\_time} thấp nhất. Nếu một tiến trình mới đến có thời gian còn lại ngắn hơn tiến trình đang chạy, CPU sẽ chuyển mạch (context switch).
+    
+    \item \textbf{Priority (Preemptive):} 
+    Hàm \texttt{algo\_priority\_preemptive} hoạt động tương tự SRTF nhưng tiêu chí lựa chọn là \texttt{min(available, key=lambda x: x.priority)}.
+\end{itemize}
+
+
+
+\subsection{Round Robin và Hàng đợi đa cấp (MLFQ)}
+
+Đây là các thuật toán phức tạp hơn, sử dụng khái niệm \textit{Time Quantum} (Định mức thời gian).
+
+\begin{itemize}
+    \item \textbf{Round Robin (RR):} 
+    Trong mã nguồn, RR được xử lý như một trường hợp đặc biệt của MLFQ với một mức hàng đợi duy nhất và một giá trị \texttt{q} (Quantum). Mỗi tiến trình chỉ được chạy tối đa \texttt{q} thời gian, sau đó phải xuống cuối hàng đợi để nhường CPU.
+    
+    \item \textbf{Multilevel Feedback Queue (MLFQ):} 
+    Đây là thuật toán linh hoạt nhất được cài đặt trong hàm \texttt{algo\_mlfq}. Chương trình sử dụng 3 hàng đợi (\texttt{queues[0, 1, 2]}):
+    \begin{enumerate}
+        \item \textbf{Q0 (Cấp 1):} Sử dụng Round Robin với Quantum $q_1=4$. Nếu tiến trình không kết thúc, nó bị đẩy xuống Q1.
+        \item \textbf{Q1 (Cấp 2):} Sử dụng Round Robin với Quantum $q_2=8$. Nếu vẫn chưa xong, nó bị đẩy xuống Q2.
+        \item \textbf{Q2 (Cấp 3):} Sử dụng FCFS để xử lý nốt các tiến trình dài (CPU-bound).
+    \end{enumerate}
+    \textit{Lưu ý:} Bất cứ khi nào có tiến trình mới đến Q0, nó sẽ có quyền ưu tiên cao hơn các hàng đợi bên dưới.
+\end{itemize}
+
+
+
+\subsection{Tính toán hiệu năng}
+
+Sau khi mô phỏng xong, chương trình tính toán các chỉ số quan trọng để đánh giá thuật toán:
+\begin{equation}
+    Turnaround\ Time = Completion\ Time - Arrival\ Time
+\end{equation}
+\begin{equation}
+    Waiting\ Time = Turnaround\ Time - Burst\ Time
+\end{equation}
+
+Các kết quả này được hiển thị trực quan qua biểu đồ Gantt trên thành phần \texttt{Canvas} và bảng thống kê \texttt{Treeview}.
+\end{document}
