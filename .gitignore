@@ -1,1 +1,24 @@
 **/.vscode/*.db
+# --- STM32CubeIDE Build Artifacts ---
+**/Debug/
+**/Release/
+**/*.elf
+**/*.bin
+**/*.hex
+**/*.map
+**/*.list
+**/*.o
+**/*.d
+**/*.su
+**/*.cyclo
+
+# --- IDE / Toolchain Specifics ---
+.metadata/
+.recommenders/
+**/ipc/
+**/*.launch
+**/*.scvd
+
+# --- User-specific settings ---
+.settings/org.eclipse.cdt.codan.core.prefs
+.settings/org.eclipse.cdt.core.prefs

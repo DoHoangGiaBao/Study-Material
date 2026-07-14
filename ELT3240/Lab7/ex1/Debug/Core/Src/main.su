@@ -1,4 +1,0 @@
-../Core/Src/main.c:3:6:init_PA5	4	static
-../Core/Src/main.c:10:6:init_tim2	4	static
-../Core/Src/main.c:17:6:delay_1s	4	static
-../Core/Src/main.c:23:5:main	8	static

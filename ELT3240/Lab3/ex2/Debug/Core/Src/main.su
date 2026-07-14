@@ -1,4 +1,0 @@
-../Core/Src/main.c:3:6:init_inputs	4	static
-../Core/Src/main.c:15:6:init_outputs	4	static
-../Core/Src/main.c:28:6:decimal_to_binary	16	static
-../Core/Src/main.c:32:5:main	40	static
