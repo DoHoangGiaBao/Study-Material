@@ -1,0 +1,8 @@
+../Drivers/CMSIS/Include/core_cm4.h:1684:22:__NVIC_EnableIRQ	16	static,ignoring_inline_asm
+../Drivers/CMSIS/Include/core_cm4.h:1814:22:__NVIC_SetPriority	16	static
+../Core/Src/MPU6050_DMA.c:12:6:I2C1_Init	4	static
+../Core/Src/MPU6050_DMA.c:57:6:DMA1_Init	8	static
+../Core/Src/MPU6050_DMA.c:89:6:MPU6050_Write_Register	16	static
+../Core/Src/MPU6050_DMA.c:111:6:MPU6050_Init	8	static
+../Core/Src/MPU6050_DMA.c:129:6:MPU6050_Start_DMA_Read	4	static
+../Core/Src/MPU6050_DMA.c:150:6:DMA1_Stream0_IRQHandler	56	static

@@ -1,0 +1,4 @@
+../Core/Src/main.c:3:6:init_inputs	1
+../Core/Src/main.c:15:6:init_outputs	1
+../Core/Src/main.c:28:6:decimal_to_binary	1
+../Core/Src/main.c:32:5:main	5
