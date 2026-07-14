@@ -1,0 +1,18 @@
+/*
+ * dht11.c
+ *
+ *  Created on: Apr 6, 2026
+ *      Author: vatcraft
+ */
+
+
+void TIM2_config() {
+
+}
+
+void delay_us(uint32_t us) {
+	do {
+		uint32_t start = SysTick->VAL;
+
+	} while(0);
+}

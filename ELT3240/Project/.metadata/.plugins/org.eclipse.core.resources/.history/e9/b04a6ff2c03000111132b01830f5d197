@@ -1,0 +1,131 @@
+/**
+ * Custom DHT11 library, providing functionalities to interface
+ * with the DHT11 temperature and humidity sensor
+ * for NUCLEO-F401RE board.
+ *
+ * Author: Do Hoang Gia Bao
+ */
+
+#include "dht11.h"
+
+
+/**
+ * Enable the Timer and wait for the update flag to set.
+ */
+void TIM2_config() {
+	// Enable TIM2 clock
+	RCC->APB1ENR |= (1UL << 0);
+
+	// Set up prescalar and ARR
+	TIM2->PSC = 84 - 1; // 84MHz / 84 = 1MHz ~~ 1us delay
+	TIM2->ARR = 0xffff; // Max ARR value
+
+	// Enable the timer
+	TIM2->CR1 |= (1UL << 0); // Enable counter
+	while(!(TIM2->SR & (1UL << 0))); // UIF: Update interrupt flag, set by hardware when the registers are updated
+}
+
+/**
+ * Set delay in micro-second
+ *
+ * @param: time value (us)
+ */
+
+void delay_us(uint32_t us) {
+	// Reset counter
+	TIM2->CNT = 0;
+	while(TIM2->CNT < us);
+}
+
+/**
+ * Set delay in mili-second
+ *
+ * @param: time value (ms)
+ */
+void delay_ms(uint32_t ms) {
+	for (uint32_t i = 0; i < ms; i++) {
+		delay_us(1000); // Delay of 1 ms
+	}
+}
+
+void set_pin(GPIO_TypeDef *port, uint16_t pin, uint32_t mode, uint32_t pupd) {
+	// Enable clock for specified port
+	if (port == GPIOB) RCC->AHB1ENR |= (1UL << 1);
+	else if (port == GPIOC) RCC->AHB1ENR |= (1UL << 2);
+	else RCC->AHB1ENR |= (1UL << 0);
+
+	// Set input or output for pin
+	port->MODER &= ~(3UL << (pin * 2));
+	if (mode == 1) port->MODER |= (1UL << (pin * 2));
+
+	// Set pull-up or pull-down for pin
+	port->PUPDR &= ~(3UL << (pin * 2));
+	if (pupd == 1) port->PUPDR |= (1UL << (pin * 2));
+	if (pupd == 2) port->PUPDR |= (2UL << (pin * 2));
+}
+
+/**
+ * Send start signal to the DHT11 sensor to initiate a data read.
+ * Set the data pin to low for ~18ms then high, and finally
+ * setting the pin to input to read data.
+ *
+ * @param: port - Port name, pin - Pin number
+ */
+void send_start_signal(GPIO_TypeDef *port, uint16_t pin) {
+	// Set pin to pul-up output
+	set_pin(port, pin, 1, 1);
+
+	// Pull low for 18ms
+	port->ODR &= ~(1UL << pin);
+	delay_ms(18);
+
+	// Pull high for DHT11 response (20-40us)
+	port->ODR |= (1UL << pin);
+	delay_us(30);
+
+	// Set pin to pull-up input
+	set_pin(port, pin, 0, 1);
+}
+
+/**
+ * Read a byte of data from DHT11 sensor during communication process.
+ *
+ * @param: port - port name, pin - pin number.
+ * @return: A byte of data read from sensor.
+ */
+uint8_t read_byte(GPIO_TypeDef *port, uint16_t pin) {
+	uint8_t byte = 0;
+	for (int i = 0; i < 8; i++) {
+		// Wait for pin to go high (start of the bit)
+		while (!(port->IDR & (1UL << pin)));
+
+		// Wait 40us (Middle between 28us and 70us)
+		delay_us(40);
+		if (port->IDR & (1UL << pin)) {
+			byte |= (1UL << (7 - I)); // If still high, it's a '1'
+		}
+
+		// Wait for pin to go low before starting next bit
+		while (port->IDR & (1UL << pin));
+	}
+
+	return byte;
+}
+
+/**
+ * Read and returns the temperature from DHT11 sensor.
+ *
+ * @return: Temperature value or -1 if failed.
+ */
+int get_temperature() {
+	return 0;
+}
+
+/**
+ * Read and returns the humidity from DHT11 sensor.
+ *
+ * @return: Humidity value or -2 if failed.
+ */
+int get_humidity() {
+	return 0;
+}

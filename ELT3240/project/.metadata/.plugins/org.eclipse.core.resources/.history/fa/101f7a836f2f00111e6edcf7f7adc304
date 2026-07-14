@@ -1,0 +1,27 @@
+/**
+ * Custom DHT11 library, providing functionalities to interface
+ * with the DHT11 temperature and humidity sensor
+ * for NUCLEO-F401RE board.
+ *
+ * Author: Do Hoang Gia Bao
+ */
+
+#include "dht11.h"
+
+void init_pin(GPIO_TypeDef *port, uint16_t pin, uint32_t mode, uint32_t pupd) {
+
+}
+
+void send_start_signal() {
+
+}
+
+int get_temperature() {
+	return 0;
+}
+
+int get_humidity() {
+	return 0;
+}
+
+

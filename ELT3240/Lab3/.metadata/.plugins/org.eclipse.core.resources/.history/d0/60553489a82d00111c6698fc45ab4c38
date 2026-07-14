@@ -1,0 +1,32 @@
+#include <stm32f4xx_hal.h>
+
+void init_inputs() {
+	// Enable Port A
+	RCC->AHB1ENR |= (1UL << 0);
+
+	// Configure PA0 as input
+	GPIOA->MODER &= ~(3UL << 0);
+
+	// Configure PA0 as pull-up
+	GPIOA->PUPDR &= ~(3UL << 0);
+	GPIOA->PUPDR |= (1UL << 0);
+}
+
+void init_outputs() {
+	// Enable Port B
+	RCC->AHB1ENR |= (1UL << 1);
+
+	// Configure PB0, PB1, PB2 as inputs
+	GPIOB->MODER &= ~((3UL << 0) | (3UL << 2) | (3UL << 4));
+	GPIOB->MODER |= (1UL << 0) | (1UL << 2) | (1UL << 4);
+
+	// Configure PB0, PB1, PB2 as pull up
+	GPIOB->PUPDR &= ~((3UL << 0) | (3UL << 2) | (3UL << 4));
+	GPIOB->PUPDR |= (1UL << 0) | (1UL << 2) | (1UL << 4);
+}
+
+int main() {
+	init_inputs();
+	init_inputs();
+	return 0;
+}

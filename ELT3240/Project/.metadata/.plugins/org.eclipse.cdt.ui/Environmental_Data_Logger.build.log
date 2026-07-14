@@ -1,0 +1,10 @@
+15:01:08 **** Incremental Build of configuration Debug for project Environmental_Data_Logger ****
+make -j4 all 
+arm-none-eabi-size  Environmental_Data_Logger.elf 
+   text	   data	    bss	    dec	    hex	filename
+   8772	     12	   1652	  10436	   28c4	Environmental_Data_Logger.elf
+Finished building: default.size.stdout
+ 
+
+15:01:08 Build Finished. 0 errors, 0 warnings. (took 132ms)
+

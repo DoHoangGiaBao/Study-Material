@@ -1,0 +1,15 @@
+!SESSION 2026-03-11 14:23:46.490 -----------------------------------------------
+eclipse.buildId=Version 1.18.1
+java.version=21.0.3
+java.vendor=Eclipse Adoptium
+BootLoader constants: OS=linux, ARCH=x86_64, WS=gtk, NL=en_US
+Command-line arguments:  -os linux -ws gtk -arch x86_64
+
+!ENTRY com.st.stm32cube.ide.mcu.informationcenter 4 4 2026-03-11 14:24:58.387
+!MESSAGE CubeMX plugin appears to be active, Log4j initialization might be too late.
+
+!ENTRY com.st.stm32cube.ide.mcu.informationcenter 1 1 2026-03-11 14:24:58.389
+!MESSAGE Log4j2 initialized with config file /home/vatcraft/Desktop/FET/ELT3240/Lab2/.metadata/.log4j2.xml
+
+!ENTRY com.st.stm32cube.ide.mcu.ide 1 1 2026-03-11 14:25:01.877
+!MESSAGE Started RMI Server, listening on port 41337

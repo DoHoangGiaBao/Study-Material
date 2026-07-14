@@ -1,0 +1,9 @@
+#include <dht11.h>
+
+int main() {
+	SysClockConfig();
+	TIM2_confg();
+	set_pin(GPIOA, 5, 1, 0);
+
+	return 0;
+}

@@ -1,0 +1,2 @@
+\xpginauxfiletrue 
+\selectlanguage *{vietnamese}

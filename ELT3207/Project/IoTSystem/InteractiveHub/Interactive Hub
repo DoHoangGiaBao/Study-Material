@@ -1,0 +1,307 @@
+#define BLYNK_TEMPLATE_ID "TMPL6wLdaY8Lr"
+#define BLYNK_TEMPLATE_NAME "Smart Home Security"
+#define BLYNK_AUTH_TOKEN "N7reEFuw8PZGEH-n9kUs7V38by6tGttU"
+
+#include <Arduino.h>
+#include <BLEDevice.h>
+#include <BLE2902.h>
+#include <TFT_eSPI.h>
+#include <XPT2046_Touchscreen.h>
+#include <WiFi.h>
+#include <time.h>
+#include <BlynkSimpleEsp32.h>
+
+#define DISPLAY_WIDTH 320
+#define DISPLAY_HEIGHT 240
+
+#define XPT2046_IRQ 36
+#define XPT2046_MOSI 32
+#define XPT2046_MISO 39
+#define XPT2046_CLK 25
+#define XPT2046_CS 33
+
+TFT_eSPI tft = TFT_eSPI();                                                        
+SPIClass mySpi = SPIClass(VSPI);                                                  
+XPT2046_Touchscreen ts(XPT2046_CS, XPT2046_IRQ);
+
+static BLEUUID serviceUUID("4e273072-7dbc-4700-b194-3fde4bd6e974");         
+static BLEUUID charUUID("c9bcbccc-08b4-4c03-88ee-5b06f9781fb5");
+
+static bool doConnect = false;
+static bool connected = false;
+static bool isScanning = false;
+static bool isArmed = false;
+static bool alertActive = false;
+static unsigned long alertStartTime = 0;
+
+static BLERemoteCharacteristic *pRemoteCharacteristic;
+static BLEAdvertisedDevice PIRDevice; 
+BLEClient *pClient = nullptr; 
+
+static String PIRMessage = "No Motion Detected";
+static String batteryMessage = "--";
+
+const char* ssid = "iPhone";
+const char* pass = "159951753357";
+
+const char* ntpServer = "pool.ntp.org";
+const long  gmtOffset_sec = 3600 * 6;
+const int   daylightOffset_sec = 3600;
+
+BLYNK_WRITE(V1) {
+  int pinValue = param.asInt(); 
+  
+  if (pinValue == 1) {
+    isArmed = true;
+    Serial.println("Blynk App: SYSTEM ARMED");
+  } else {
+    isArmed = false;
+    Serial.println("Blynk App: SYSTEM DISARMED");
+  }
+  
+  drawUI(); 
+}
+
+BLYNK_CONNECTED() {
+  Blynk.syncVirtual(V1); 
+}
+
+static void notifyCallback(BLERemoteCharacteristic *pBLERemoteCharacteristic, uint8_t *pData, size_t length, bool isNotify) {
+  String receivedMessage = "";
+  for (size_t i = 0; i < length; i++) {
+    receivedMessage += (char)pData[i];
+  }
+  
+  Serial.println("ALERT -> Notification from Sensor Node: " + receivedMessage);
+  struct tm timeInfo;
+  String date = "";
+  if (receivedMessage.startsWith("Motion Detected")) {
+    if (!getLocalTime(&timeInfo)) {
+      date = " [Time Unknown]";
+    } else {
+
+      char timeBuf[20];
+
+      strftime(timeBuf, sizeof(timeBuf), " %m/%d %H:%M", &timeInfo);
+      date = String(timeBuf);
+    }
+
+    PIRMessage = "Motion Detected" + date;
+    batteryMessage = receivedMessage.substring(15); 
+  } else {
+    PIRMessage = "No Motion Detected";
+    batteryMessage = "--";
+  }
+
+  Blynk.virtualWrite(V0, PIRMessage);
+  Blynk.virtualWrite(V2, batteryMessage);
+
+  drawUI();
+  alertActive = true;
+  alertStartTime = millis();
+
+  // Trigger Disconnection
+  if (pClient != nullptr && connected) {
+    Serial.println("Data received successfully. Disconnecting from sensor node...");
+    pClient->disconnect(); 
+  }
+}
+
+class CYDClientCallback : public BLEClientCallbacks {
+  void onConnect(BLEClient *pclient) {
+    connected = true;
+    Serial.println("Successfully connected to server!");
+  }
+
+  void onDisconnect(BLEClient *pclient) {
+    connected = false;
+    isScanning = false;
+    Serial.println("Device disconnected cleanly. Re-initiating background scan...");
+  }
+};
+
+static CYDClientCallback clientCallbacks;
+
+bool connectToServer() {
+  Serial.print("Forming a connection to: ");
+  Serial.println(PIRDevice.getAddress().toString().c_str());
+
+  if (pClient == nullptr) {
+    pClient = BLEDevice::createClient();
+    pClient->setClientCallbacks(&clientCallbacks);
+  }
+
+  if (!pClient->connect(&PIRDevice)) {
+    Serial.println(" - Connection handshake failed.");
+    return false;
+  }
+
+  pClient->setMTU(517); 
+
+  BLERemoteService *pRemoteService = pClient->getService(serviceUUID);
+  if (pRemoteService == nullptr) {
+    pClient->disconnect();
+    return false;
+  }
+
+  pRemoteCharacteristic = pRemoteService->getCharacteristic(charUUID);
+  if (pRemoteCharacteristic == nullptr) {
+    pClient->disconnect();
+    return false;
+  }
+
+  if (pRemoteCharacteristic->canNotify()) {
+    pRemoteCharacteristic->registerForNotify(notifyCallback);
+  } else {
+    pClient->disconnect();
+    return false;
+  }
+
+  connected = true;
+  return true;
+}
+
+class PIRAdvertisedDeviceCallbacks : public BLEAdvertisedDeviceCallbacks {
+  void onResult(BLEAdvertisedDevice advertisedDevice) {
+    if (doConnect || connected) return; 
+
+    if (advertisedDevice.haveServiceUUID() && advertisedDevice.isAdvertisingService(serviceUUID)) {
+      Serial.println("\n>> TARGET SENSOR DETECTED! Stopping scan...");
+      BLEDevice::getScan()->stop(); 
+      PIRDevice = advertisedDevice; 
+      doConnect = true;
+      isScanning = false; 
+    }  
+  }  
+};
+
+static PIRAdvertisedDeviceCallbacks scanCallbacks;
+
+void scanCompleteCallback(BLEScanResults scanResults) {
+  Serial.println("Scan window finished. Preparing next cycle...");
+  isScanning = false; 
+}
+
+void startScanning() {
+  Serial.print("Free heap before scan: ");
+  Serial.println(ESP.getFreeHeap()); 
+
+  Serial.println("Starting a new 4-second scan burst...");
+  BLEScan *pBLEScan = BLEDevice::getScan();
+  
+  pBLEScan->setAdvertisedDeviceCallbacks(&scanCallbacks);
+  pBLEScan->setInterval(1349);
+  pBLEScan->setWindow(449);
+  pBLEScan->setActiveScan(true);
+  
+  pBLEScan->start(4, scanCompleteCallback, false); 
+  isScanning = true;
+}
+
+void drawUI() {
+  tft.fillScreen(TFT_BLACK);
+  tft.setTextColor(TFT_WHITE, TFT_BLACK);
+  tft.drawCentreString("SMART HUB SECURITY", DISPLAY_WIDTH / 2, 20, 2);
+  tft.drawFastHLine(20, 40, DISPLAY_WIDTH - 40, TFT_DARKGREY);
+
+  int buttonX = 40;
+  int buttonY = 70;
+  int buttonWidth = DISPLAY_WIDTH - 80;
+  int buttonHeight = 80;
+
+  tft.setTextColor(TFT_DARKGREY, TFT_BLACK);
+  tft.drawRightString("Node Batt: " + batteryMessage + "%", DISPLAY_WIDTH - 10, 5, 1);
+
+  if (isArmed) {
+    tft.fillRoundRect(buttonX, buttonY, buttonWidth, buttonHeight, 8, TFT_RED);
+    tft.setTextColor(TFT_WHITE);
+    tft.drawCentreString("SYSTEM ARMED", DISPLAY_WIDTH / 2, buttonY + 20, 4);
+    tft.drawCentreString("Tap Screen to Disarm", DISPLAY_WIDTH / 2, buttonY + 50, 2);
+    tft.fillCircle(35, 25, 6, TFT_RED);
+    tft.fillRect(10, DISPLAY_HEIGHT - 40, DISPLAY_WIDTH - 20, 30, TFT_BLACK);
+    tft.setTextColor(TFT_WHITE, TFT_BLACK);
+    tft.drawCentreString("ALERT: " + PIRMessage, DISPLAY_WIDTH / 2, DISPLAY_HEIGHT - 35, 2);
+  } else {
+    tft.fillRoundRect(buttonX, buttonY, buttonWidth, buttonHeight, 8, TFT_GREEN);
+    tft.setTextColor(TFT_BLACK);
+    tft.drawCentreString("SYSTEM DISARMED", DISPLAY_WIDTH / 2, buttonY + 20, 4);
+    tft.drawCentreString("Tap Screen to Arm", DISPLAY_WIDTH / 2, buttonY + 50, 2);
+    tft.fillCircle(35, 25, 6, TFT_GREEN);
+    
+    tft.fillRect(10, DISPLAY_HEIGHT - 40, DISPLAY_WIDTH - 20, 30, TFT_BLACK);
+    tft.setTextColor(TFT_WHITE);
+    tft.drawCentreString("System Ready", DISPLAY_WIDTH / 2, DISPLAY_HEIGHT - 35, 2);
+  }
+}
+
+void checkTouch() {
+  if (ts.touched()) {
+    TS_Point p = ts.getPoint();
+    int16_t x = map(p.x, 230, 3800, 0, DISPLAY_WIDTH);
+    int16_t y = map(p.y, 340, 3900, 0, DISPLAY_HEIGHT);
+
+    static unsigned long lastTouchTime = 0;
+    if (millis() - lastTouchTime > 400) { 
+      if (x > 40 && x < (DISPLAY_WIDTH - 40) && y > 70 && y < 150) {
+        lastTouchTime = millis();
+        isArmed = !isArmed;
+        Blynk.virtualWrite(V1, isArmed ? 1 : 0);
+        drawUI();
+      }
+    }
+  }
+}
+
+void setup() {
+  Serial.begin(115200);
+  delay(500); 
+  Serial.println("Connecting to WiFi and Blynk Server...");
+  Blynk.begin(BLYNK_AUTH_TOKEN, ssid, pass);  
+
+  configTime(gmtOffset_sec, daylightOffset_sec, ntpServer);
+
+  Blynk.virtualWrite(V0, PIRMessage);
+  Blynk.virtualWrite(V2, batteryMessage);
+
+  tft.init();
+  tft.setRotation(1);
+
+  mySpi.begin(XPT2046_CLK, XPT2046_MISO, XPT2046_MOSI, XPT2046_CS);
+  ts.begin(mySpi);
+  ts.setRotation(1);
+  drawUI();
+  
+  Serial.println("\nInitializing Continuous BLE Client...");
+  BLEDevice::init("CYD_HUB_CLIENT");
+  startScanning();
+}
+
+void loop() {
+  Blynk.run();
+  
+  if (doConnect) {
+    delay(200); 
+    if (connectToServer()) {
+      Serial.println("System secure. Monitoring notifications...\n");
+    } else {
+      Serial.println("Failed to link. Restarting scan loop.");
+    }
+    doConnect = false;
+  } else if (!doConnect) {
+    checkTouch();
+  }
+
+  if (alertActive && (millis() - alertStartTime >= 10000)) {
+    alertActive = false;
+    PIRMessage = "No Motion Detected";
+    Blynk.virtualWrite(V0, PIRMessage);
+    drawUI();
+  }
+
+  if (!connected && !doConnect && !isScanning) {
+    delay(500); 
+    startScanning();
+  }
+
+  delay(100); 
+}

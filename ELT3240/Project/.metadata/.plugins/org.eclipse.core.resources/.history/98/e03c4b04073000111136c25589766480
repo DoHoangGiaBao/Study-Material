@@ -1,0 +1,7 @@
+#include <dht11.h>
+
+int main() {
+	SYSClockConfig();
+
+	return 0;
+}

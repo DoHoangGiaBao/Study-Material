@@ -1,0 +1,22 @@
+Timer
+Communication (ex. UART)
+GPIO
+Multi-task
+External interrupt
+Task output
+
+Project
+Environmental Data Logger with Sleep Mode
+If you want to practice power efficiency—a massive part of modern embedded systems—this is the way to go.
+
+The Concept: A weather station that sleeps to save power, wakes up periodically to read data, updates a screen, and allows a PC to request a data dump.
+
+Timer: A low-power timer (like an RTC or watchdog) wakes the microcontroller up every 10 seconds to read a temperature/humidity sensor (like a DHT11).
+
+External Interrupt: A physical "Wake / Force Read" button that a user can press to instantly wake the microcontroller from sleep mode and update the screen without waiting for the next timer cycle.
+
+GPIO: Communicates with the temperature sensor and drives a backlight for the display.
+
+Displayable Output: An OLED screen showing current temp/humidity.
+
+UART: Connects to a PC. When the user types DUMP into the serial monitor, the microcontroller transmits the last 10 recorded temperature readings over UART.

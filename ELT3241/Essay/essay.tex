@@ -1,0 +1,122 @@
+\documentclass[12pt]{article}
+\usepackage[vietnamese]{babel}
+\usepackage{amsmath,amssymb}
+\usepackage{graphicx}
+\usepackage{geometry}
+\usepackage{tikz} % Required for drawing the border
+
+% Font setting for XeLaTeX
+\usepackage{unicode-math}
+\setmainfont{Latin Modern Roman}
+\setmathfont{Latin Modern Math}
+
+\usepackage{indentfirst}
+\usepackage{float}
+\usepackage[unicode]{hyperref}
+\hypersetup{
+    colorlinks=true,
+    linkcolor=black, % Bạn có thể đổi thành blue nếu muốn hiện link màu xanh
+    filecolor=magenta,      
+    urlcolor=cyan,
+    pdftitle={Tiểu luận ELT3241_1},
+}
+
+\begin{document}
+
+\begin{titlepage}
+    % 1. Force absolute equal margins for the title page only
+    \newgeometry{left=2cm, right=2cm, top=2cm, bottom=2cm}
+    
+    % 2. Draw the border relative to the PHYSICAL page edges
+    \begin{tikzpicture}[overlay, remember picture]
+        % Outer thick line
+        \draw [line width=1.5pt]
+            ([shift={(1.5cm,-1.5cm)}]current page.north west)
+            rectangle
+            ([shift={(-1.5cm,1.5cm)}]current page.south east);
+        % Inner thin line
+        \draw [line width=0.5pt]
+            ([shift={(1.65cm,-1.65cm)}]current page.north west)
+            rectangle
+            ([shift={(-1.65cm,1.65cm)}]current page.south east);
+    \end{tikzpicture}
+
+    \centering
+    \setlength{\parindent}{0pt} % Prevent any hidden text shifting
+
+    % --- Top Header ---
+    \textbf{\large ĐẠI HỌC QUỐC GIA HÀ NỘI} \\
+    \textbf{\large TRƯỜNG ĐẠI HỌC CÔNG NGHỆ} \\
+    
+    \vspace{1cm}
+    
+    % Logo (If you have it, un-comment the next line)
+    \includegraphics[width=4cm]{images/logo.png} 
+    \vspace{1cm}
+    
+    % --- Title Section ---
+    \textbf{\Large TIỂU LUẬN} \\
+    \textbf{\large CÁC VẤN ĐỀ HIỆN ĐẠI CỦA KỸ THUẬT MÁY TÍNH} \\
+    
+    \vspace{1.5cm}
+    
+    \begin{minipage}{0.9\textwidth}
+        \centering
+        \textbf{\Large Đề tài: THIẾT KẾ VÀ TRIỂN KHAI THUẬT TOÁN LẬP KẾ HOẠCH ĐƯỜNG ĐI CHO ROBOT HAI BÁNH VI SAI VỚI KHẢ NĂNG NHẬN THỨC XÃ HỘI TRONG KHU VỰC ĐÔ THỊ}
+    \end{minipage}
+    
+    \vspace{2cm}
+    
+    % --- Khối thông tin căn giữa tuyệt đối ---
+    \begin{center}
+        \noindent % Loại bỏ lùi đầu dòng nếu có
+        \begin{minipage}{\textwidth} % Sử dụng toàn bộ chiều ngang để căn giữa nội dung bên trong
+            \centering
+            \large
+            \begin{tabular}{l l}
+                \textbf{Giảng viên hướng dẫn:} & TS. Hoàng Gia Hưng \\[0.3cm]
+                \textbf{Sinh viên thực hiện:}  & Đỗ Hoàng Gia Bảo --- 23020783 \\
+                                               & Lê Thị Linh Nga --- 23020849 \\[0.3cm]
+                \textbf{Lớp:}                  & K68-E-CE1 \\
+                \textbf{Mã lớp học phần:}       & ELT3241\_1
+            \end{tabular}
+        \end{minipage}
+    \end{center}
+    
+    \vfill
+    
+    % --- Footer ---
+    \textbf{\large HÀ NỘI - 2026}
+    \vspace{0.8cm}
+
+    \restoregeometry % Restore standard margins for the rest of the document
+\end{titlepage}
+
+\newpage
+\setlength{\parindent}{0.5cm}
+\section*{LỜI NÓI ĐẦU}
+Việc lập kế hoạch đường đi truyền thống thường chỉ tập trung vào việc tìm kiếm quãng đường ngắn nhất hoặc tránh va chạm vật lý. Tuy nhiên, trong một không gian chia sẻ với con người, robot cần phải hiểu và tuân thủ các quy tắc ứng xử xã hội ngầm định — như giữ khoảng cách cá nhân, không cắt ngang cuộc trò chuyện, hay dự đoán hướng di chuyển của người đi bộ. Đây chính là một trong những bài toán được quan tâm của Kỹ thuật máy tính hiện đại.  
+
+Thông qua nội dung môn học "Các vấn đề hiện đại của Kỹ thuật máy tính" dưới sự hướng dẫn của giảng viên bộ môn - TS. Hoàng Gia Hưng, nhóm chúng em đã phát triển và đề xuất một giải pháp mới giúp robot có thể lập kế hoạch đường đi một cách hiệu quả trong môi trường có con người. Chúng em xin gửi lời cảm ơn sâu sắc đến thầy Hoàng Gia Hưng đã cho chúng em hiểu được những phương pháp nghiên cứu, và trình bày những hiểu biết của mình một cách khoa học, theo những chuẩn mực quốc tế. 
+
+Chúng em xin chân thành cảm ơn! 
+\newpage
+\tableofcontents
+\newpage
+\section{Tổng quan vấn đề nghiên cứu}
+\subsection{Giới thiệu}
+Sự phát triển mạnh mẽ của khoa học máy tính và kỹ thuật điều khiển trong thập kỷ qua đã thúc đẩy sự ra đời của các hệ thống tự hành thông minh. Trong bối cảnh các đô thị hiện đại đang hướng tới mô hình \textbf{Smart City}, việc sử dụng robot để thực hiện các nhiệm vụ như giao hàng chặng cuối, tuần tra an ninh hay hỗ trợ người khuyết tật đã trở thành một xu thế tất yếu. Không giống như robot trong nhà máy vận hành theo các kịch bản lập sẵn, robot di động trong đô thị phải đối mặt với một môi trường vô cùng phức tạp: động động, phi cấu trúc và chứa đầy các yếu tố ngẫu nhiên. 
+
+Theo báo cáo từ World Robotics 2020 (Hình 1.1), số lượng lắp đặt robot hàng năm trên toàn thế giới luôn duy trì ở mức cao, đặc biệt là trong các ngành công nghiệp mũi nhọn như Ô tô và Điện tử với hàng trăm nghìn đơn vị mỗi năm. Sự tăng trưởng này không chỉ minh chứng cho sự hoàn thiện về mặt phần cứng mà còn phản ánh một xu thế tất yếu: \textbf{Robot đang tiến dần từ môi trường công nghiệp sang môi trường dịch vụ và đô thị.} 
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\textwidth]{images/Annual\_installations\_worldwide\_by\_industries\_2024.png}
+    \caption{Số lượng lắp đặt robot hàng năm theo ngành công nghiệp (Nguồn: World Robotics 2020)}
+    \label{fig:robot_installations}
+\end{figure}
+Trong số các cấu hình robot di động, Robot hai bánh vi sai (Differential Drive Robot) là mô hình phổ biến nhất nhờ cấu trúc cơ khí đơn giản, khả năng xoay tại chỗ linh hoạt và chi phí triển khai thấp. Tuy nhiên, thách thức lớn nhất khi triển khai loại robot này trong khu vực công cộng không chỉ nằm ở việc tránh các vật cản tĩnh như tường hay cột điện, mà là làm thế nào để robot có thể di chuyển một cách "hài hòa" trong dòng người. 
+
+Khái niệm \textbf{Nhận thức xã hội (Socially Aware Navigation)} xuất hiện như một lời giải cho bài toán tương tác giữa người và máy. Một robot có nhận thức xã hội không chỉ đơn thuần coi con người là những vật cản động cần né tránh bằng khoảng cách vật lý ngắn nhất. Thay vào đó, nó phải có khả năng hiểu và tuân thủ các quy chuẩn hành vi của con người. 
+
+Đề tài này không chỉ tập trung vào khía cạnh kỹ thuật thuần túy mà còn hướng tới mục tiêu xây dựng niềm tin và sự chấp nhận của xã hội đối với sự hiện diện của robot trong đời sống hàng ngày. Điều này hoàn toàn phù hợp với tinh thần của các vấn đề hiện đại trong kỹ thuật máy tính: \textbf{Thông minh hơn, nhân văn hơn và kết nối sâu sắc hơn với thực tế.}
+\end{document}

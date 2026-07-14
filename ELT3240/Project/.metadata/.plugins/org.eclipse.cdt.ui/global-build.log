@@ -1,0 +1,91 @@
+16:15:51 **** Incremental Build of configuration Debug for project Environmental_Data_Logger_HAL ****
+make -j4 all 
+arm-none-eabi-gcc "../Core/Src/main.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F401xE -c -I../Core/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I../Drivers/CMSIS/Include -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Core/Src/main.d" -MT"Core/Src/main.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Core/Src/main.o"
+arm-none-eabi-gcc -o "Environmental_Data_Logger_HAL.elf" @"objects.list"   -mcpu=cortex-m4 -T"/home/vatcraft/Desktop/FET/ELT3240/Project/Environmental_Data_Logger_HAL/STM32F401RETX_FLASH.ld" --specs=nosys.specs -Wl,-Map="Environmental_Data_Logger_HAL.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+Finished building target: Environmental_Data_Logger_HAL.elf
+ 
+arm-none-eabi-size  Environmental_Data_Logger_HAL.elf 
+arm-none-eabi-objdump -h -S Environmental_Data_Logger_HAL.elf  > "Environmental_Data_Logger_HAL.list"
+   text	   data	    bss	    dec	    hex	filename
+  13544	     92	   2052	  15688	   3d48	Environmental_Data_Logger_HAL.elf
+Finished building: default.size.stdout
+ 
+Finished building: Environmental_Data_Logger_HAL.list
+ 
+16:16:48 **** Incremental Build of configuration Debug for project Environmental_Data_Logger_HAL ****
+make -j4 all 
+arm-none-eabi-size  Environmental_Data_Logger_HAL.elf 
+   text	   data	    bss	    dec	    hex	filename
+  13544	     92	   2052	  15688	   3d48	Environmental_Data_Logger_HAL.elf
+Finished building: default.size.stdout
+ 
+16:19:21 **** Incremental Build of configuration Debug for project Environmental_Data_Logger_HAL ****
+make -j4 all 
+arm-none-eabi-gcc "../Core/Src/main.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F401xE -c -I../Core/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I../Drivers/CMSIS/Include -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Core/Src/main.d" -MT"Core/Src/main.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Core/Src/main.o"
+arm-none-eabi-gcc -o "Environmental_Data_Logger_HAL.elf" @"objects.list"   -mcpu=cortex-m4 -T"/home/vatcraft/Desktop/FET/ELT3240/Project/Environmental_Data_Logger_HAL/STM32F401RETX_FLASH.ld" --specs=nosys.specs -Wl,-Map="Environmental_Data_Logger_HAL.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+Finished building target: Environmental_Data_Logger_HAL.elf
+ 
+arm-none-eabi-size  Environmental_Data_Logger_HAL.elf 
+arm-none-eabi-objdump -h -S Environmental_Data_Logger_HAL.elf  > "Environmental_Data_Logger_HAL.list"
+   text	   data	    bss	    dec	    hex	filename
+  13544	     92	   2052	  15688	   3d48	Environmental_Data_Logger_HAL.elf
+Finished building: default.size.stdout
+ 
+Finished building: Environmental_Data_Logger_HAL.list
+ 
+16:20:05 **** Incremental Build of configuration Debug for project Environmental_Data_Logger_HAL ****
+make -j4 all 
+arm-none-eabi-gcc "../Core/Src/main.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F401xE -c -I../Core/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I../Drivers/CMSIS/Include -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Core/Src/main.d" -MT"Core/Src/main.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Core/Src/main.o"
+arm-none-eabi-gcc -o "Environmental_Data_Logger_HAL.elf" @"objects.list"   -mcpu=cortex-m4 -T"/home/vatcraft/Desktop/FET/ELT3240/Project/Environmental_Data_Logger_HAL/STM32F401RETX_FLASH.ld" --specs=nosys.specs -Wl,-Map="Environmental_Data_Logger_HAL.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+Finished building target: Environmental_Data_Logger_HAL.elf
+ 
+arm-none-eabi-size  Environmental_Data_Logger_HAL.elf 
+arm-none-eabi-objdump -h -S Environmental_Data_Logger_HAL.elf  > "Environmental_Data_Logger_HAL.list"
+   text	   data	    bss	    dec	    hex	filename
+  13600	     92	   2052	  15744	   3d80	Environmental_Data_Logger_HAL.elf
+Finished building: default.size.stdout
+ 
+Finished building: Environmental_Data_Logger_HAL.list
+ 
+16:21:45 **** Incremental Build of configuration Debug for project Environmental_Data_Logger_HAL ****
+make -j4 all 
+arm-none-eabi-gcc "../Core/Src/main.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F401xE -c -I../Core/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I../Drivers/CMSIS/Include -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Core/Src/main.d" -MT"Core/Src/main.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Core/Src/main.o"
+arm-none-eabi-gcc -o "Environmental_Data_Logger_HAL.elf" @"objects.list"   -mcpu=cortex-m4 -T"/home/vatcraft/Desktop/FET/ELT3240/Project/Environmental_Data_Logger_HAL/STM32F401RETX_FLASH.ld" --specs=nosys.specs -Wl,-Map="Environmental_Data_Logger_HAL.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+Finished building target: Environmental_Data_Logger_HAL.elf
+ 
+arm-none-eabi-size  Environmental_Data_Logger_HAL.elf 
+arm-none-eabi-objdump -h -S Environmental_Data_Logger_HAL.elf  > "Environmental_Data_Logger_HAL.list"
+   text	   data	    bss	    dec	    hex	filename
+  13672	     92	   2052	  15816	   3dc8	Environmental_Data_Logger_HAL.elf
+Finished building: default.size.stdout
+ 
+Finished building: Environmental_Data_Logger_HAL.list
+ 
+16:23:23 **** Incremental Build of configuration Debug for project Environmental_Data_Logger_HAL ****
+make -j4 all 
+arm-none-eabi-gcc "../Core/Src/main.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F401xE -c -I../Core/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I../Drivers/CMSIS/Include -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Core/Src/main.d" -MT"Core/Src/main.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Core/Src/main.o"
+arm-none-eabi-gcc -o "Environmental_Data_Logger_HAL.elf" @"objects.list"   -mcpu=cortex-m4 -T"/home/vatcraft/Desktop/FET/ELT3240/Project/Environmental_Data_Logger_HAL/STM32F401RETX_FLASH.ld" --specs=nosys.specs -Wl,-Map="Environmental_Data_Logger_HAL.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+Finished building target: Environmental_Data_Logger_HAL.elf
+ 
+arm-none-eabi-size  Environmental_Data_Logger_HAL.elf 
+arm-none-eabi-objdump -h -S Environmental_Data_Logger_HAL.elf  > "Environmental_Data_Logger_HAL.list"
+   text	   data	    bss	    dec	    hex	filename
+  13672	     92	   2052	  15816	   3dc8	Environmental_Data_Logger_HAL.elf
+Finished building: default.size.stdout
+ 
+Finished building: Environmental_Data_Logger_HAL.list
+ 
+16:26:24 **** Incremental Build of configuration Debug for project Environmental_Data_Logger_HAL ****
+make -j4 all 
+arm-none-eabi-gcc "../Core/Src/main.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F401xE -c -I../Core/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I../Drivers/CMSIS/Include -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Core/Src/main.d" -MT"Core/Src/main.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Core/Src/main.o"
+arm-none-eabi-gcc -o "Environmental_Data_Logger_HAL.elf" @"objects.list"   -mcpu=cortex-m4 -T"/home/vatcraft/Desktop/FET/ELT3240/Project/Environmental_Data_Logger_HAL/STM32F401RETX_FLASH.ld" --specs=nosys.specs -Wl,-Map="Environmental_Data_Logger_HAL.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+Finished building target: Environmental_Data_Logger_HAL.elf
+ 
+arm-none-eabi-size  Environmental_Data_Logger_HAL.elf 
+arm-none-eabi-objdump -h -S Environmental_Data_Logger_HAL.elf  > "Environmental_Data_Logger_HAL.list"
+   text	   data	    bss	    dec	    hex	filename
+  13672	     92	   2052	  15816	   3dc8	Environmental_Data_Logger_HAL.elf
+Finished building: default.size.stdout
+ 
+Finished building: Environmental_Data_Logger_HAL.list
+ 

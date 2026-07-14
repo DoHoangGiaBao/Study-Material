@@ -1,0 +1,35 @@
+/**
+ * Custom DHT11 library, providing functionalities to interface
+ * with the DHT11 temperature and humidity sensor
+ * for NUCLEO-F401RE board.
+ *
+ * Author: Do Hoang Gia Bao
+ */
+
+#ifndef DHT11_h
+#define DHT11_h
+
+#include <stm32f4xx_hal.h>
+
+struct DHT11 {
+	/**
+	 * Send start signal to the DHT11 sensor to initiate a data read.
+	 * Set the data pin to low for ~18ms then high, and finally
+	 * setting the pin to input to read data.
+	 */
+	void send_start_signal();
+
+	/**
+	 * Read and returns the temperature from DHT11 sensor.
+	 *
+	 * @return: Temperature value.
+	 */
+	void get_temperature();
+
+	/**
+	 * Read and returns the humidity from DHT11 sensor.
+	 *
+	 * @return: Humidity value.
+	 */
+	void get_humidity();
+};

@@ -1,0 +1,60 @@
+/**
+ * Custom DHT11 library, providing functionalities to interface
+ * with the DHT11 temperature and humidity sensor
+ * for NUCLEO-F401RE board.
+ *
+ * Author: Do Hoang Gia Bao
+ */
+
+#include "dht11.h"
+
+
+/**
+ * Enable the Timer and wait for the update flag to set.
+ */
+void TIM10_config() {
+	// Enable TIM2 clock
+	RCC->APB2LPENR |= (1UL << 17);
+}
+
+void set_pin(GPIO_TypeDef *port, uint16_t pin, uint32_t mode, uint32_t pupd) {
+	// Enable clock for specified port
+	if (port == GPIOB) RCC->AHB1ENR |= (1UL << 1);
+	else if (port == GPIOC) RCC->AHB1ENR |= (1UL << 2);
+	else RCC->AHB1ENR |= (1UL << 0);
+
+	// Set input or output for pin
+	port->MODER &= ~(3UL << (pin * 2));
+	if (mode == 1) port->MODER |= (1UL << (pin * 2));
+
+	// Set pull-up or pull-down for pin
+	port->PUPDR &= ~(3UL << (pin * 2));
+	if (pupd == 1) port->PUPDR |= (1UL << (pin * 2));
+	if (pupd == 2) port->PUPDR |= (2UL << (pin * 2));
+}
+
+void send_start_signal(GPIO_TypeDef *port, uint16_t pin) {
+	// Set pin to pul-up output
+	set_pin(port, pin, 1, 1);
+
+	// Pull low for 18ms
+	port->ODR &= ~(1UL << pin);
+	set_delay(18000);
+
+	// Pull high for DHT11 response (20-40us)
+	port->ODR |= (1UL << pin);
+	set_delay(30);
+
+	// Set pin to pull-up input
+	set_pin(port, pin, 0, 1);
+}
+
+int get_temperature() {
+	return 0;
+}
+
+int get_humidity() {
+	return 0;
+}
+
+

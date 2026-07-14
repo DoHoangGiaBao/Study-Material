@@ -1,0 +1,52 @@
+/**
+ * Custom DHT11 library, providing functionalities to interface
+ * with the DHT11 temperature and humidity sensor
+ * for NUCLEO-F401RE board.
+ *
+ * Author: Do Hoang Gia Bao
+ */
+
+#pragma once
+
+#include <stm32f4xx_hal.h>
+
+/**
+ * Set up delay.
+ *
+ * @param: Desired delay time in micro-second.
+ */
+void set_timer(uint32_t us);
+
+/**
+ * Set up pin function.
+ * Only support port A, port B and port C.
+ * Only support input or output pin.
+ * Only support pull-up or pull-down or no pull-up/pull-down.
+ *
+ * @param: 	port - Port to enable clock
+ * 			pin  - Pin number
+ * 			mode - Set input (0) or output (1)
+ * 			pupd - Set no pull-up/pull-down (0) or pull-up (1) or pull-down (2)
+ */
+void set_pin(GPIO_TypeDef *port, uint16_t pin, uint32_t mode, uint32_t pupd);
+
+/**
+ * Send start signal to the DHT11 sensor to initiate a data read.
+ * Set the data pin to low for ~18ms then high, and finally
+ * setting the pin to input to read data.
+ */
+void send_start_signal();
+
+/**
+ * Read and returns the temperature from DHT11 sensor.
+ *
+ * @return: Temperature value or -1 if failed.
+ */
+int get_temperature();
+
+/**
+ * Read and returns the humidity from DHT11 sensor.
+ *
+ * @return: Humidity value or -2 if failed.
+ */
+int get_humidity();

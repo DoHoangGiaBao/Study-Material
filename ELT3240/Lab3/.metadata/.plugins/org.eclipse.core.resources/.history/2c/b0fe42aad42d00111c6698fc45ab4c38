@@ -1,0 +1,60 @@
+#include <stm32f4xx_hal.h>
+
+void init_inputs() {
+	// Enable Port A
+	RCC->AHB1ENR |= (1UL << 0);
+
+	// Configure PA0 as input
+	GPIOA->MODER &= ~(3UL << 0);
+
+	// Configure PA0 as pull-up
+	GPIOA->PUPDR &= ~(3UL << 0);
+	GPIOA->PUPDR |= (1UL << 0);
+}
+
+void init_outputs() {
+	// Enable Port B
+	RCC->AHB1ENR |= (1UL << 1);
+
+	// Configure PB0, PB1, PB2 as inputs
+	GPIOB->MODER &= ~((3UL << 0) | (3UL << 2) | (3UL << 4));
+	GPIOB->MODER |= (1UL << 0) | (1UL << 2) | (1UL << 4);
+
+	// Configure PB0, PB1, PB2 as pull up
+	GPIOB->PUPDR &= ~((3UL << 0) | (3UL << 2) | (3UL << 4));
+	GPIOB->PUPDR |= (1UL << 0) | (1UL << 2) | (1UL << 4);
+}
+
+void decimal_to_binary(int n) {
+
+}
+
+int main() {
+	init_inputs();
+	init_outputs();
+
+	int counter = 0;
+
+	while (1) {
+		if (!(GPIOA->IDR & (1UL << 0))) {
+			counter++;
+
+			int n = counter;
+			int binaryNum[3];
+			int i = 0;
+
+			while (n > 0) {
+				binaryNum[i] = n % 2;
+				n /= 2;
+				i++;
+			}
+
+			GPIOB->ODR &= ~((1UL << 0) | (1UL << 1) | (1UL << 2));
+			GPIOB->ODR |= (binaryNum[2] << 0) | (binaryNum[1] << 1) | (binaryNum[0] << 2);
+
+			for (int j = 0; j < 500000; j++);
+		}
+	}
+
+	return 0;
+}

@@ -1,0 +1,17 @@
+15:20:43 **** Incremental Build of configuration Debug for project ex4 ****
+make -j4 all 
+arm-none-eabi-gcc "../Core/Src/main.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F401xE -c -I../Core/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I../Drivers/CMSIS/Include -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Core/Src/main.d" -MT"Core/Src/main.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Core/Src/main.o"
+arm-none-eabi-gcc -o "ex4.elf" @"objects.list"   -mcpu=cortex-m4 -T"/home/vatcraft/Desktop/FET/ELT3240/Lab7/ex4/STM32F401RETX_FLASH.ld" --specs=nosys.specs -Wl,-Map="ex4.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+Finished building target: ex4.elf
+ 
+arm-none-eabi-size  ex4.elf 
+arm-none-eabi-objdump -h -S ex4.elf  > "ex4.list"
+   text	   data	    bss	    dec	    hex	filename
+   1232	      4	   1588	   2824	    b08	ex4.elf
+Finished building: default.size.stdout
+ 
+Finished building: ex4.list
+ 
+
+15:20:44 Build Finished. 0 errors, 0 warnings. (took 341ms)
+

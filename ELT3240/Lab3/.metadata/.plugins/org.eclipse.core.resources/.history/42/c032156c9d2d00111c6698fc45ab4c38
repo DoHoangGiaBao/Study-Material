@@ -1,0 +1,37 @@
+#include <stm32f4xx_hal.h>
+
+void init_inputs() {
+	// Enable Port C
+	RCC->AHB1ENR |= (1UL << 2);
+
+	// Configure PC13 as input
+	GPIOC->MODER &= ~(3UL << 26);
+
+	// Configure PC13 as no pull-up/pull-down
+	GPIOC->PUPDR &= ~(3UL << 26);
+}
+
+void init_outputs() {
+	// Enable Port A
+	RCC->AHB1ENR |= (1UL << 0);
+
+	// Configure PA5 as output
+	GPIOC->MODER &= ~(3UL << 10);
+	GPIOC->MODER |= (1UL << 10);
+
+	// Configure PA5 as pull-up
+	GPIOC->PUPDR &= ~(3UL << 10);
+	GPIOC->PUPDR |= (1UL << 10);
+}
+
+int main() {
+	init_inputs();
+	init_outputs();
+
+	while (1) {
+		if (GPIOC->IDR & (1UL << 13)) {
+			GPIOA->ODR ^= (1UL << 5);
+		}
+	}
+ 	return 0;
+}

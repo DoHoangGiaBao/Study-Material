@@ -1,0 +1,122 @@
+#include <BLEDevice.h>
+#include <BLE2902.h>
+
+#define PIR_PIN             13
+#define BATTERY_MONITOR_PIN 32
+#define DEVICE_NAME         "PIR Sensor Node"
+#define SERVICE_UUID        "4e273072-7dbc-4700-b194-3fde4bd6e974"
+#define CHARACTERISTIC_UUID "c9bcbccc-08b4-4c03-88ee-5b06f9781fb5"
+#define BLE_TIMEOUT         8000
+
+bool volatile deviceConnected = false;
+bool volatile isSubscribed = false;
+
+class PIRServerCallbacks : public BLEServerCallbacks {
+  void onConnect(BLEServer *pServer) {
+    digitalWrite(2, HIGH); 
+    deviceConnected = true;
+    Serial.println("Interactive Hub Connected");
+  }
+  void onDisconnect(BLEServer *pServer) {
+    digitalWrite(2, LOW); 
+    deviceConnected = false;
+    isSubscribed = false;
+    Serial.println("Interactive Hub Disconnected");
+  }
+};
+
+// Callback to detect when the client actually turns on notifications
+class DescriptorCallbacks : public BLEDescriptorCallbacks {
+  void onWrite(BLEDescriptor *pDescriptor) {
+    uint8_t* pData = pDescriptor->getValue();
+    if (pDescriptor->getLength() == 2) {
+      // BLE Notifications are turned on when client writes 0x0001 to the BLE2902 CCCD Descriptor
+      if (pData[0] == 0x01 && pData[1] == 0x00) {
+        isSubscribed = true;
+        Serial.println("Client Subscribed to Notifications!");
+      }
+    }
+  }
+};
+
+int getBatteryPercentage() {
+  int rawADC = analogRead(BATTERY_MONITOR_PIN);
+  float voltage = (rawADC / 4095.0) * 3.3;
+  int percentage = map(voltage * 100, 0, 330, 0, 100);
+  if(percentage > 100) percentage = 100;
+  if(percentage < 0) percentage = 0;
+  
+  return percentage;
+}
+
+void setup() {
+  Serial.begin(115200);
+  delay(100);
+  Serial.print("\n");
+  pinMode(2, OUTPUT);
+
+  esp_sleep_wakeup_cause_t wakeup_reason = esp_sleep_get_wakeup_cause();
+  if (wakeup_reason == ESP_SLEEP_WAKEUP_EXT0) {
+    Serial.print("Wakeup Caused By PIR\n");
+  } else {
+    Serial.print("Wakeup From Other Reasons\n");
+  }
+
+  BLEDevice::init(DEVICE_NAME);
+
+  BLEServer *pServer = BLEDevice::createServer();
+  pServer->setCallbacks(new PIRServerCallbacks());
+
+  BLEService *pService = pServer->createService(SERVICE_UUID);
+
+  BLECharacteristic *pCharacteristic = pService->createCharacteristic(
+                      CHARACTERISTIC_UUID,
+                      BLECharacteristic::PROPERTY_READ | BLECharacteristic::PROPERTY_NOTIFY 
+                    );
+
+  // Create descriptor and register callback to intercept the client's subscription action
+  BLE2902 *p2902Descriptor = new BLE2902();
+  p2902Descriptor->setCallbacks(new DescriptorCallbacks());
+  pCharacteristic->addDescriptor(p2902Descriptor);
+
+  pService->start();
+
+  BLEAdvertising *pAdvertising = BLEDevice::getAdvertising();
+  pAdvertising->addServiceUUID(SERVICE_UUID);
+  pAdvertising->setScanResponse(true);
+  BLEDevice::startAdvertising();
+
+  Serial.print("Waiting For Connection...\n");
+
+  unsigned long startTime = millis();
+  while((millis() - startTime < BLE_TIMEOUT) && !deviceConnected) {
+    delay(10);
+  }
+
+  if (deviceConnected) {
+    Serial.println("Hub linked. Waiting for subscription handshake...");
+    while(!isSubscribed);
+    delay(200);
+    String message = "Motion Detected" + String(getBatteryPercentage());
+    pCharacteristic->setValue(message.c_str());
+    pCharacteristic->notify();
+    Serial.print("Notification sent, Waiting for client to disconnect...\n");
+    while(deviceConnected);
+  } else {
+    Serial.print("Device Not Connected\n");
+  }
+
+  while (digitalRead(PIR_PIN) == HIGH);
+
+  BLEDevice::stopAdvertising();
+  BLEDevice::deinit(false);
+  Serial.println("Sensor Server Going Offline...");
+
+  esp_sleep_enable_ext0_wakeup((gpio_num_t) PIR_PIN, HIGH);
+  esp_deep_sleep_start();
+}
+
+void loop() {
+  // Not used in Deep Sleep
+
+}

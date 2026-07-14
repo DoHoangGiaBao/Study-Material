@@ -1,0 +1,15 @@
+#include <dht11.h>
+
+int main() {
+	SysClockConfig();
+	TIM2_config();
+	set_pin(GPIOA, 5, 1, 0);
+
+	while (1) {
+		GPIOA->BSRR |= (1 << 5);
+		delay_ms(1000);
+		GPIOA->BSRR |= (1 << 21);
+		delay_ms(1000);
+	}
+	return 0;
+}

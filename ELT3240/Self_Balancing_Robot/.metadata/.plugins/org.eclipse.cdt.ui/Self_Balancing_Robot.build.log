@@ -1,0 +1,19 @@
+22:38:53 **** Incremental Build of configuration Debug for project Self_Balancing_Robot ****
+make -j4 all 
+arm-none-eabi-gcc "../Core/Src/complementary_filter.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F401xE -c -I../Core/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I../Drivers/CMSIS/Include -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Core/Src/complementary_filter.d" -MT"Core/Src/complementary_filter.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Core/Src/complementary_filter.o"
+arm-none-eabi-gcc "../Core/Src/main.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F401xE -c -I../Core/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I../Drivers/CMSIS/Include -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Core/Src/main.d" -MT"Core/Src/main.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Core/Src/main.o"
+arm-none-eabi-gcc "../Core/Src/mpu6050.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F401xE -c -I../Core/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I../Drivers/CMSIS/Include -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Core/Src/mpu6050.d" -MT"Core/Src/mpu6050.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Core/Src/mpu6050.o"
+arm-none-eabi-gcc -o "Self_Balancing_Robot.elf" @"objects.list"   -mcpu=cortex-m4 -T"/home/vatcraft/Desktop/FET/ELT3240/Self_Balancing_Robot/Self_Balancing_Robot/STM32F401RETX_FLASH.ld" --specs=nosys.specs -Wl,-Map="Self_Balancing_Robot.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -u _printf_float -Wl,--start-group -lc -lm -Wl,--end-group
+Finished building target: Self_Balancing_Robot.elf
+ 
+arm-none-eabi-size  Self_Balancing_Robot.elf 
+arm-none-eabi-objdump -h -S Self_Balancing_Robot.elf  > "Self_Balancing_Robot.list"
+   text	   data	    bss	    dec	    hex	filename
+  19116	    460	   1916	  21492	   53f4	Self_Balancing_Robot.elf
+Finished building: default.size.stdout
+ 
+Finished building: Self_Balancing_Robot.list
+ 
+
+22:38:54 Build Finished. 0 errors, 0 warnings. (took 500ms)
+

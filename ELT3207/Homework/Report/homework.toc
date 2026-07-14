@@ -1,0 +1,9 @@
+\xpginauxfiletrue 
+\selectlanguage *{vietnamese}
+\contentsline {section}{\numberline {1}Yêu cầu đề bài}{3}{section.1}%
+\contentsline {section}{\numberline {2}Thiết kế bộ điều khiển PID}{3}{section.2}%
+\contentsline {subsection}{\numberline {2.1}Phân tích hệ thống khi chưa sử dụng bộ điều khiển PID}{3}{subsection.2.1}%
+\contentsline {subsection}{\numberline {2.2}Xác định các thông số mong muốn để thiết kế bộ điều khiển PID}{5}{subsection.2.2}%
+\contentsline {section}{\numberline {3}Số hóa hàm truyền hệ thống}{7}{section.3}%
+\contentsline {section}{\numberline {4}Mô phỏng và đánh giá}{8}{section.4}%
+\xpginauxfilefalse 

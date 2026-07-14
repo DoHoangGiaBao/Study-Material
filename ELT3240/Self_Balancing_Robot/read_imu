@@ -1,0 +1,10 @@
+1. Wake up the sensor
+Registers: PWR_MGT_1
+Set SLEEP to 0 to wake up the sensor
+
+2. Read Accelerometer Data
+Registers: ACCEL_XOUT_H, ACCEL_XOUT_L, ACCEL_YOUT_H, ACCEL_YOUT_L, ACCEL_ZOUT_H, and ACCEL_ZOUT_L
+
+3. Read Gyroscpoe Data
+Registers: GYRO_XOUT_H, GYRO_XOUT_L, GYRO_YOUT_H, GYRO_YOUT_L, GYRO_ZOUT_H, and GYRO_ZOUT_L
+

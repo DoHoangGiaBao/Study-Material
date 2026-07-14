@@ -1,0 +1,10 @@
+{
+  "additionalFiles": "../../..,../../..,../..,../..,../..,../..,../..,../..,../..,../..,../..",
+  "builtInLibrariesFolders": "/home/vatcraft/.arduino15/libraries",
+  "compiler.optimization_flags": "-Os",
+  "customBuildProperties": "",
+  "fqbn": "esp32:esp32:esp32:UploadSpeed=921600,CPUFreq=240,FlashFreq=80,FlashMode=qio,FlashSize=4M,PartitionScheme=min_spiffs,DebugLevel=none,PSRAM=disabled,LoopCore=1,EventsCore=1,EraseFlash=none,JTAGAdapter=default,ZigbeeMode=default",
+  "hardwareFolders": "/home/vatcraft/.arduino15/packages/esp32/hardware/esp32/3.3.8,/home/vatcraft/.arduino15/packages/esp32/hardware/esp32/3.3.8",
+  "otherLibrariesFolders": "/home/vatcraft/Arduino/libraries",
+  "sketchLocation": "/home/vatcraft/Desktop/FET/ELT3207/Project/IoTSystem/InteractiveHub"
+}

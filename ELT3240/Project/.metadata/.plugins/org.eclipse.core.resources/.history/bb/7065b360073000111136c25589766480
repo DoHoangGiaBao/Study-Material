@@ -1,0 +1,9 @@
+#include <dht11.h>
+
+int main() {
+	SysClockConfig();
+	TIM2_confg();
+
+
+	return 0;
+}

@@ -1,0 +1,30 @@
+#include "stm32f4xx_hal.h"
+
+int main(void) {
+	init_led(); // Initialize led
+	init_button(); // Initialize button
+
+	// Reading status of button and turn on/off led based on status of button
+	uint32_t read_status;
+
+	// Configure PA5 for Led
+	RCC->AHB1ENR |= 1 << 0;  // Enable clock to IO port A
+	GPIOA->MODER |= 1 << 10; // Configure PA5 to output
+	GPIOA->PUPDR |= 1 << 10; // Configure PA5 to pull up
+
+	// Configure PC13 for button input
+	RCC->AHB1ENR |= 1 << 2; // Enable clock to IO port C
+	GPIOC->MODER |= 0 << 26; // Configure PC13 to input
+
+	while (1) {
+		read_status = GPIOC->IDR;
+		if (read_status == 1){
+			GPIOA->BSRR = 1 << 5;
+		}
+		else {
+			GPIOA->BSRR = 0 << 21;
+		}
+	}
+
+	return 0;
+}

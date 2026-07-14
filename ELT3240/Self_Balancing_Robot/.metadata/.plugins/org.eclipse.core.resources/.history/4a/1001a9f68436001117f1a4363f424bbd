@@ -1,0 +1,74 @@
+#include <stm32f4xx_hal.h>
+#include <stdio.h>
+#include <math.h>
+#include "mpu6050.h"
+#include "complementary_filter.h"
+#include "uart.h"
+
+volatile uint8_t imu_filter_flag = 0;
+volatile uint8_t mpu_status = 0;
+
+void TIM2_IRQHandler(void) {
+	if (TIM2->SR & (1U << 0)) {
+		imu_filter_flag = 1;         // Set our synchronization flag
+		TIM2->SR &= ~(1U << 0);     // Clear the interrupt pending bit
+	}
+}
+
+void TIM2_config(void) {
+	RCC->APB1ENR |= (1U << 0);
+	TIM2->CR1 |= (1U << 0);
+	TIM2->PSC = 16 - 1;
+	TIM2->ARR = 10000 - 1; // Count to 10ms
+	TIM2->DIER |= (1U << 0);
+	NVIC_EnableIRQ(TIM2_IRQn);
+}
+
+int main(void) {
+	RCC->AHB1ENR |= (1U << 0);
+	GPIOA->MODER &= ~(3U << 10);
+	GPIOA->MODER |= (1U << 10);
+
+	I2C1_config();
+	USART2_Init();
+
+	setvbuf(stdout, NULL, _IONBF, 0);
+	mpu_status = MPU6050_Test_Connection();
+
+	if (mpu_status == 1) {
+		// Connection successful! Initialize the sensor.
+		MPU6050_Init();
+		GPIOA->BSRR = (1U << 21);
+		printf("MPU6050 Initialized Successfully!\n");
+	} else {
+		printf("ERROR: MPU6050 Not Found.\n");
+		while(1) {
+			GPIOA->BSRR = (1U << 5);
+			for (volatile int i = 0; i < 1000000; i++);
+			GPIOA->BSRR = (1U << 21);
+			for (volatile int i = 0; i < 1000000; i++);
+		}
+	}
+
+	TIM2_config();
+	uint8_t buffer[14];
+
+	while(1) {
+		if (imu_filter_flag == 1) {
+			imu_filter_flag = 0;
+
+			// Get robot arm current angleS (rad)
+			IMU_Angles curr_angles = get_filtered_angle(MPU_ADDR, DATA_REG_ADDR, buffer, 14);
+
+			float curr_pitch = current_angles.angle_filtered;
+			float curr_yaw = current_angles.yaw_angle;
+
+			printf("%.4f\r\n", curr_angle);
+			// PID logic for motors command here
+		}
+
+		// Other tasks here
+	}
+
+	return 0;
+}

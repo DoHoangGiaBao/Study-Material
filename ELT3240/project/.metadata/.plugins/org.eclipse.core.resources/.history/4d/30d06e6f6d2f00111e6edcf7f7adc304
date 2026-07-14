@@ -1,0 +1,18 @@
+/**
+ * Custom DHT11 library, providing functionalities to interface
+ * with the DHT11 temperature and humidity sensor
+ * for NUCLEO-F401RE board.
+ *
+ * Author: Do Hoang Gia Bao
+ */
+
+#include <dht11.h>
+
+void DHT11::send_start_signal() {
+    set_pin_output();
+    HAL_GPIO_WritePin(GPIO_Port, GPIO_Pin, GPIO_PIN_RESET);
+    HAL_Delay(18); // DHT11 needs at least 18ms
+    HAL_GPIO_WritePin(GPIO_Port, GPIO_Pin, GPIO_PIN_SET);
+    delay_us(20);
+    set_pin_input();
+}

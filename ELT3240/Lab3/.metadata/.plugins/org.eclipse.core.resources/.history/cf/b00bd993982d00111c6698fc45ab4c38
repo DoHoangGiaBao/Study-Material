@@ -1,0 +1,20 @@
+#include <stm32f4xx_hal.h>
+
+void init_inputs() {
+	RCC->AHB1ENR |= (1UL << 2);
+
+	GPIOC->MODER &= ~(3UL << 26);
+
+	GPIOC->PUPDR &= ~(3UL << 26);
+}
+
+void init_outputs() {
+	RCC->AHB1ENR |= (1UL << 0);
+
+	GP
+}
+
+int main() {
+
+	return 0;
+}

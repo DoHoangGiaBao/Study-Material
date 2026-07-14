@@ -1,0 +1,50 @@
+-----Ex1-----
+int a = 15;									->			addi x1, x0, 15
+int b = 10;									->			addi x2, x0, 10
+int c = a + b;								->			add x3, x1, x2
+int d = c - 5;								->			addi x4, x3 -5
+(a->x1, b->x2, c->x3, d->x4)
+
+-----Ex2-----
+int x = 25;									->			addi x1, x0, 25
+int y = 42;									->			addi x2, x0, 42
+int max;									->			addi x3, x0, 0
+
+if (x >= y) {								->			lt x1, x2, ELSE
+    max = x;											add x3, x0, x1
+} else {												j END	 
+    max = y;									ELSE:	add x3, x0, x2
+}												END:
+(x->x1, y->x2, max->x3)
+
+-----Ex3-----
+int i = 0;									->			addi x1, x0, 0
+int sum = 0;								->			addi x2, x0, 0
+														addi x3, x0, 5 # Store number 5
+while (i < 5) {								->	LOOP:	bge x1, x3, END
+    sum = sum + i;										add x2, x2, x1
+    i++;												addi x1, x1, 1
+}														j LOOP
+												END:
+(i->x1, sum->x2, 5->x3)
+
+-----Ex4-----
+int first_element = arr[0];					-> 			lw x1, 0(x10)
+int second_element = arr[1];				->			lw x2, 4(x10)
+
+arr[2] = first_element + second_element;	->			add x3, x1, x2
+														sw x3, 8(x10)
+(arr[0]->x10, first_element->x1, second_element->x2, x3 stores result of x1 + x2)
+
+-----Ex5-----
+int add_numbers(int a, int b) {				->			addi x1, x0, 10		# x = 10
+    return a + b;										addi x2, x0, 20		# y = 20
+}														add x3, x0, x1		# a = x
+														add x4, x0, x2		# b = y
+int main() {											
+    int x = 10;
+    int y = 20;
+    int result = add_numbers(x, y);
+    return result;
+}
+

@@ -1,0 +1,180 @@
+#include "MPU6050_DMA.h"
+
+uint8_t mpu_data_buffer[14];
+extern volatile float pitch = 0;
+extern volatile float roll = 0;
+volatile int obstacle_detected = 0;
+
+const float alpha = 0.98f;     // Filter coefficient (0.95 - 0.99)
+const float dt = 0.005f; // 200 Hz = 5ms
+
+/* PB8 (SCL), PB9 (SDA) */
+static void I2C1_Init() {
+    RCC->AHB1ENR |= (1U << 1); /* Enalbe Port B Clock */
+    RCC->APB1ENR |= (1U << 21); /* Enable I2C1 Clock */
+
+    /* Alternate Function mode for PB8 and PB9 */
+    GPIOB->MODER &= (3U << 16) | (3U << 18);
+    GPIOB->MODER |= (2U << 16) | (2U << 18);
+
+    /* Open Drain Output for PB8 and PB9 */
+    GPIOB->OTYPER |= (1U << 8) | (1U << 9);
+
+    /* High Speed for PB8 and PB9 */
+    GPIOB->OSPEEDR |= (3U << 16) | (3U << 18);
+
+    /* Pull Up for PB8 and PB9 */
+    GPIOB->PUPDR &= ~(3U << 16) | (3U << 18);
+    GPIOB->PUPDR |= (1U << 16) | (3U << 18);
+
+    /* Alternate Function for PB8 and PB9 */
+    GPIOB->AFR[1] |= (4U << 0) | (4U << 4);
+
+    /* Software reset I2C1 */
+    I2C1->CR1 |= (1U << 15);
+    I2C1->CR1 &= ~(1U << 15);
+
+    /* Peripheral clock in MHz (must match APB1) */
+    I2C1->CR2 = 16;
+
+    /* I2C1 Clock Control for 400KHz Fast Mode */
+    I2C1->CCR &= ~0xFFF;
+    I2C1->CCR |= (1U << 15); // Fast Mode
+    I2C1->CCR |= (1U << 14); // Duty Cycle 16/9 (2/1 if set 0)
+    I2C1->CCR = 13; // Speed Control value
+
+    /* TRISE = (16MHz * 300ns) + 1 = 5.8 -> 6*/
+    I2C1->TRISE = 6;
+
+    /* DMA for I2C */
+    I2C1->CR2 |= (1U << 11); // DMAEN: Enable I2C DMA Requests
+    I2C1->CR2 |= (1U << 12); // LAST: NACK sent after last DMA transfer
+
+    /* Enable I2C */
+    I2C1->CR1 |= (1U << 0);
+}
+
+static void DMA1_Init() {
+    /* 1. Enable DMA1 Clock */
+    RCC->AHB1ENR |= (1U << 21);
+
+    /* 2. Disable Stream 0 to configure */
+    DMA1_Stream0->CR &= ~(1U << 0);
+    while (DMA1_Stream0->CR & (1U << 0));
+
+    /* 3. Set Peripheral Address (I2C1 Data Register) */
+    DMA1_Stream0->PAR = (uint32_t)&(I2C1->DR);
+
+    /* 4. Set Memory Address (RAM Buffer) */
+    DMA1_Stream0->M0AR = (uint32_t)mpu_data_buffer;
+
+    /* 5. Set number of data items (14 bytes for Burst Read) */
+    DMA1_Stream0->NDTR = 14;
+
+    /* 6. Configure Control Register (CR) */
+    DMA1_Stream0->CR = 0;
+    DMA1_Stream0->CR |= (1U << 25);  /* Select Channel 1 (I2C1 RX) */
+    DMA1_Stream0->CR |= (1U << 10);  /* MINC: Memory Increment Mode */
+    DMA1_Stream0->CR |= (1U << 8);   /* CIRC: Circular Mode for continuous 200Hz updates */
+    DMA1_Stream0->CR |= (1U << 4);   /* TCIE: Transfer Complete Interrupt Enable */
+
+    /* Enable ISR */
+    NVIC_SetPriority(DMA1_Stream0_IRQn, 1);
+    NVIC_EnableIRQ(DMA1_Stream0_IRQn);
+
+    /* 7. Enable DMA1 Stream 0 */
+    DMA1_Stream0->CR |= (1U << 0);
+}
+
+static void MPU6050_Write_Register(uint8_t reg, uint8_t data) {
+    /* Send Start Condition */
+    I2C1->CR1 |= (1U << 8);
+    while (!(I2C1->SR1 & (1U << 0)));
+
+    /* Send Slave Address (Write) */
+    I2C1->DR = (MPU6050_ADDR << 1);
+    while (!(I2C1->SR1 & (1U << 1)));
+    (void)I2C1->SR2; // Clear ADDR flag
+
+    /* Send Register Address */
+    I2C1->DR = reg;
+    while (!(I2C1->SR1 & (1U << 7)));
+
+    /* Send Data */
+    I2C1->DR = data;
+    while (!(I2C1->SR1 & (1U << 7)));
+
+    /* Send Stop Condition */
+    I2C1->CR1 |= (1U << 9);
+}
+
+static void MPU6050_Init() {
+    /* Wake up MPU6050 (PWR_MGMT_1) */
+    MPU6050_Write_Register(PWR_MGMT_1, 0x00);
+
+    /* Configure DLPF (CONFIG register) to set 1kHz internal clock */
+    MPU6050_Write_Register(CONFIG, 0x03);
+
+    /* Configure Accelerometer */
+    MPU6050_Write_Register(ACCEL_CONFIG, 0x00);
+
+    /* Configure Gyroscope */
+    MPU6050_Write_Register(GYRO_CONFIG, 0x00);
+
+    /* Set Sample Rate to 200Hz (SMPRT_DIV) */
+    /* Rate = 1kHz / (1 + 4) = 200Hz (5ms) */
+    MPU6050_Write_Register(SMPRT_DIV, 0x04);
+}
+
+void MPU6050_Start_DMA_Read() {
+    I2C1->CR1 |= (1U << 10); /* Ensure ACK is enabled */
+
+    I2C1->CR1 |= (1U << 8);  /* Start */
+    while (!(I2C1->SR1 & (1U << 0)));
+
+    I2C1->DR = (MPU6050_ADDR << 1); /* Write Address */
+    while (!(I2C1->SR1 & (1U << 1)));
+    (void)I2C1->SR2;
+
+    I2C1->DR = ACCEL_XOUT_H; /* Point to start of data burst */
+    while (!(I2C1->SR1 & (1U << 7)));
+
+    I2C1->CR1 |= (1U << 8);  /* Repeated Start */
+    while (!(I2C1->SR1 & (1U << 0)));
+
+    I2C1->DR = (MPU6050_ADDR << 1) | 0x01; /* Read Address */
+    while (!(I2C1->SR1 & (1U << 1)));
+    (void)I2C1->SR2; /* Clear ADDR: DMA takes over from here */
+}
+
+void DMA1_Stream0_IRQHandler(void) {
+    if (DMA1->LISR & (1U << 5)) {
+        DMA1->LIFCR |= (1U << 5); /* Clear flag */
+
+        // Only update globals if IR EXTI flag is NOT active
+        if (!obstacle_detected) {
+            uint16_t raw_ax = (int16_t)(mpu_data_buffer[0] << 8 | mpu_data_buffer[1]);
+            uint16_t raw_ay = (int16_t)(mpu_data_buffer[2] << 8 | mpu_data_buffer[3]);
+            uint16_t raw_az = (int16_t)(mpu_data_buffer[4] << 8 | mpu_data_buffer[5]);
+
+            uint16_t raw_gx  = (int16_t)(mpu_data_buffer[8]  << 8 | mpu_data_buffer[9]);
+            uint16_t raw_gy  = (int16_t)(mpu_data_buffer[10] << 8 | mpu_data_buffer[11]);
+            uint16_t Gyro_Z  = (int16_t)(mpu_data_buffer[12] << 8 | mpu_data_buffer[13]);
+
+            // Convert to Physical Units (G and Degrees/s)
+            float accX = (float)raw_ax / 16384.0f;
+            float accY = (float)raw_ay / 16384.0f;
+            float accZ = (float)raw_az / 16384.0f;
+            float gyroX = (float)raw_gx / 131.0f;
+            float gyroY = (float)raw_gy / 131.0f;
+
+            float acc_pitch = atan2f(accY, accZ);
+            float acc_roll  = atan2f(-accX, sqrtf(accY * accY + accZ * accZ));
+
+            // 4. Complementary Filter Formula
+            // Angle = alpha * (Angle + Gyro_Rate * dt) + (1 - alpha) * Accel_Angle
+            pitch = alpha * (pitch + gyroX * dt) + (1.0f - alpha) * acc_pitch;
+            roll  = alpha * (roll + gyroY * dt) + (1.0f - alpha) * acc_roll;
+        }
+    }
+}

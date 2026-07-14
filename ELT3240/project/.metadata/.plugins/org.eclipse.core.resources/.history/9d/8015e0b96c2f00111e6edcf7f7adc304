@@ -1,0 +1,12 @@
+/**
+ * Custom DHT11 library, providing functionalities to interface
+ * with the DHT11 temperature and humidity sensor
+ * for NUCLEO-F401RE board.
+ *
+ * Author: Do Hoang Gia Bao
+ */
+
+#ifndef DHT11_h
+#define DHT11_h
+
+#include <stm32f4xx_hal.h>

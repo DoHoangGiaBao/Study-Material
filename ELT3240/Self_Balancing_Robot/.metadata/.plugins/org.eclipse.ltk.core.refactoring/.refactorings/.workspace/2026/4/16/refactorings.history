@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Rename resource &apos;Self_Balancing_Robot&apos; to &apos;Angle_Sync_Arm&apos;" description="Rename resource &apos;Self_Balancing_Robot&apos;" flags="7" id="org.eclipse.ltk.core.refactoring.rename.resource" input="/Self_Balancing_Robot" name="Angle_Sync_Arm" stamp="1776001698043" updateReferences="true"/>
+</session>
